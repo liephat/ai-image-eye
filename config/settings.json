@@ -1,0 +1,6 @@
+{
+    "image_folder": "/home/mike/code/flask-image-gallery/images",
+    "formats": [ "jpg", "arw" ],
+    "model": "models\\resnet50-v2-7.onnx",
+    "labels": "models\\imagenet-simple-labels.json"
+}
