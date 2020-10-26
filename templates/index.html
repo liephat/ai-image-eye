@@ -9,20 +9,27 @@
   <link rel="stylesheet"
         type="text/css"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css">
   <link rel="stylesheet" type="text/css" href="static/style.css">
 {% endblock %}
 {% block content %}
+
   <div class="container">
-    {% for relpath in relpaths %}
-      <div class="col-lg-4 col-sm-6">
+    {% for image in images %}
+      <div class="col-md-4">
         <div class="thumbnail">
-          <img src=" {{url_for('send_image', relpath=relpath)}}" title={{relpaths}}>
+          <a href=" {{url_for('send_image', filename=image)}}" data-toggle="lightbox" data-gallery="gallery" >
+            <img src=" {{url_for('send_image', filename=image)}}" title={{image}} class="img-fluid rounded">
+          </a>
         </div>
       </div>
     {% endfor %}
   </div>
   <script
-    src="https://code.jquery.com/jquery-3.2.1.js"
-    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
-    crossorigin="anonymous"></script>
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
 {% endblock %}

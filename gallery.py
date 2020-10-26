@@ -10,19 +10,15 @@ Config = ConfigParser()
 @app.route('/')
 def index():
     filepaths = Config.image_files()
-    relpaths = []
+    images = []
     for filepath in filepaths:
-        relpaths.append(os.path.relpath(filepath, Config.image_folder()))
-    return render_template('index.html', relpaths=relpaths)
+        images.append(os.path.relpath(filepath, Config.image_folder()))
+    return render_template('index.html', images=images)
 
 
-@app.route('/images/<relpath>')
-def send_image(relpath):
-    print(relpath)
-    filepath = os.path.join(Config.image_folder(), relpath)
-    directory, filename = os.path.split(filepath)
-    print(filepath)
-    return send_from_directory(directory, filename)
+@app.route('/images/<filename>')
+def send_image(filename):
+    return send_from_directory(Config.image_folder(), filename)
 
 
 if __name__ == '__main__':
