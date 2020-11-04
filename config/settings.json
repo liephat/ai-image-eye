@@ -1,6 +1,12 @@
 {
-    "image_folder": "/home/mike/Pictures/images",
-    "formats": [ "jpg", "arw" ],
-    "model": "models/resnet50-v2-7.onnx",
-    "labels": "models/imagenet-simple-labels.json"
+    "images": {
+        "folder": "images",
+        "formats": [ "jpg", "arw" ]
+    },
+    "labeling": {
+        "resnet": {
+            "model": "config/models/resnet/resnet50-v2-7.onnx",
+            "labels": "config/models/resnet/imagenet-simple-labels.json"
+        }
+    }
 }

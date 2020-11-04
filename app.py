@@ -1,8 +1,11 @@
 import os
-from flask import Flask, render_template, send_from_directory
-from config.parser import ConfigParser
+from flask import Flask, render_template, send_from_directory, jsonify
+from app.util.config_parser import ConfigParser
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='app/static',
+            template_folder='app/templates')
 
 Config = ConfigParser()
 
@@ -19,6 +22,11 @@ def index():
 @app.route('/images/<filename>')
 def send_image(filename):
     return send_from_directory(Config.image_folder(), filename)
+
+
+@app.route('/tags')
+def send_tags():
+    return jsonify(Config.labels('resnet').tolist())
 
 
 if __name__ == '__main__':
