@@ -70,7 +70,7 @@ class ResNet(Model):
         # post process raw result; essentially consists of performing a softmax function
         result = ResNet.post_process(raw_result)
 
-        # get indices that sorts the result list, remove its single dimensions and reverse its order
+        # get indices that sort the result list, remove its single dimensions and reverse its order
         sorted_ids = np.flip(np.squeeze(np.argsort(result)))
 
         # Create dictionary with probabilities as keys and labels as values for top 5 predictions

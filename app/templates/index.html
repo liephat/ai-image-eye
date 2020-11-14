@@ -7,18 +7,24 @@
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
   <link rel="stylesheet"
+        type="text/css"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css">
   <link rel="stylesheet" type="text/css" href="static/style.css">
 {% endblock %}
 {% block content %}
 
   <div class="container">
-    {% for image in images %}
+    {% for entry in data['file'] %}
+      {% set file = data['file'][entry] %}
+      {% set labels = data['labels'][entry] %}
       <div class="col-md-4">
         <div class="thumbnail">
-          <a href=" {{url_for('send_image', filename=image)}}" data-toggle="lightbox" data-gallery="gallery" >
-            <img src=" {{url_for('send_image', filename=image)}}" title={{image}} class="img-fluid rounded">
+          <a href=" {{url_for('send_image', filename=file)}}" data-toggle="lightbox" data-gallery="gallery" >
+            <img src=" {{url_for('send_image', filename=file)}}" title={{file}} class="img-fluid rounded">
           </a>
+          <span>{{labels}}</span>
         </div>
       </div>
     {% endfor %}
