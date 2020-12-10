@@ -17,12 +17,13 @@
 
   <div class="container">
     {% for entry in data['file'] %}
+      {% set file_url = data['file'][entry] | url_escape %}
       {% set file = data['file'][entry] %}
       {% set labels = data['labels'][entry] %}
       <div class="col-md-4">
         <div class="thumbnail">
-          <a href=" {{url_for('send_image', filename=file)}}" data-toggle="lightbox" data-gallery="gallery" >
-            <img src=" {{url_for('send_image', filename=file)}}" title={{file}} class="img-fluid rounded">
+          <a href=" {{url_for('send_image', filename=file_url)}}" data-toggle="lightbox" data-gallery="gallery" >
+            <img src=" {{url_for('send_image', filename=file_url)}}" title={{file}} class="img-fluid rounded">
           </a>
           <span>{{labels}}</span>
         </div>

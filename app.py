@@ -1,6 +1,7 @@
-import os
 from flask import Flask, render_template, send_from_directory, jsonify
 from flask_restful import Api, Resource
+
+from app.ui.filters import init_filters, unescape_url
 from app.util.config_parser import ConfigParser
 from app.util.data_reader import DataReader
 
@@ -31,13 +32,15 @@ def index():
 
 @app.route('/images/<filename>')
 def send_image(filename):
-    return send_from_directory(Config.image_folder(), filename)
+    return send_from_directory(Config.image_folder(), unescape_url(filename))
 
 
 @app.route('/tags')
 def send_tags():
     return jsonify(Config.labels('resnet').tolist())
 
+
+init_filters(app)
 
 if __name__ == '__main__':
     app.run(debug=True)

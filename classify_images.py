@@ -19,11 +19,11 @@ data.index.name = 'uid'
 
 for row, image_path in enumerate(tqdm(Config.image_files())):
 
-    file_ending = image_path[-3:].lower()
+    file_ending = os.path.splitext(image_path)[1].lower()
     if file_ending == 'arw':
         with rawpy.imread(image_path) as raw:
             image = raw.post_process()
-    elif file_ending == 'jpg':
+    else:  # if file_ending in ['jpg', 'jpeg']:
         image = cv2.imread(image_path)
 
     labels = ResNet.classify(image)
