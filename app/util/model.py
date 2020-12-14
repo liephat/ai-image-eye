@@ -89,7 +89,7 @@ class ResNet(Model):
     @staticmethod
     def pre_process(img):
         # resize image to input size of resnet
-        img = cv2.resize(img, (224, 224))
+        img = cv2.resize(img, (224, 224))  # pylint: disable=no-member
 
         # convert HxWxC to a CxHxW tensor
         img_data = np.array(img).transpose(2, 0, 1)
@@ -105,5 +105,5 @@ class ResNet(Model):
             norm_img_data[i, :, :] = (img_data[i, :, :] / 255 - m[i]) / std[i]
 
         # add batch channel, result is a NxCxHxW tensor
-        norm_img_data = norm_img_data.reshape(1, 3, 224, 224).astype('float32')
+        norm_img_data = norm_img_data.reshape(1, 3, 224, 224).astype('float32')  # pylint: disable=too-many-function-args
         return norm_img_data
