@@ -1,0 +1,19 @@
+# example pylintrc see https://github.com/PyCQA/pylint/blob/master/pylintrc
+
+[MESSAGES CONTROL]
+disable=
+    #line-too-long,
+    missing-function-docstring,
+    missing-class-docstring,
+    missing-module-docstring,
+    unnecessary-pass
+
+[FORMAT]
+max-line-length=100
+
+[VARIABLES]
+dummy-variables-rgx=_$|dummy
+
+[BASIC]
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+argument-rgx=[a-z_][a-z0-9_]{0,30}$

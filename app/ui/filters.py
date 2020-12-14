@@ -14,6 +14,7 @@ def unescape_url(text):
 
 
 def init_filters(app):
+    # pylint: disable=unused-variable
     @app.template_filter()
     def url_escape(text):
         return escape_url(text)
