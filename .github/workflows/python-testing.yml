@@ -30,6 +30,8 @@ jobs:
     - name: Lint with pylint
       run: |
         python -m pylint app
+        # don't fail on Warnings
+        test $? -le 4 && exit 0
     - name: Test with pytest
       run: |
         python -m pytest
