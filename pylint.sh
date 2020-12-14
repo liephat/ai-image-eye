@@ -6,8 +6,9 @@ python -m pylint $FILES
 
 EXITCODE=$?
 
-if [ $EXITCODE -le 4 ]; then
-  # don't fail on Warnings
+if [ $EXITCODE -eq 4 -o $EXITCODE -eq 12 ]; then
+  # don't fail on Warnings, Refactorings
+  echo "Overriding exit code $EXITCODE from pylint with 0"
   exit 0
 else
   exit $EXITCODE
