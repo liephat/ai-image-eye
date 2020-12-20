@@ -31,10 +31,10 @@ class ConfigParser:
             fp += glob.glob(os.path.join(self.image_folder(), '**', f'*.{ff}'), recursive=True)
         return fp
 
-    def model(self, type):
-        return self.settings['labeling'][type]['model']
+    def model(self, _type):
+        return self.settings['labeling'][_type]['model']
 
-    def labels(self, type):
-        with open(self.settings['labeling'][type]['labels']) as f:
+    def labels(self, _type):
+        with open(self.settings['labeling'][_type]['labels']) as f:
             data = json.load(f)
         return np.asarray(data)

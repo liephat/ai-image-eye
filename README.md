@@ -30,6 +30,6 @@ The paths to these files and the path to the directory of your images must be de
 Run ```python classify_images.py```. The script creates a file ```data.csv``` containing the Top-5 labels for each image
 in your image directory.
 
-Run ```python app.py``` to start the application.
+Run ```python -m app``` to start the application.
 
 

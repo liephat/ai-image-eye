@@ -1,8 +1,10 @@
+import os
+
 import cv2
 import pandas as pd
 import rawpy
-import os
 from tqdm import tqdm
+
 from app.util.config_parser import ConfigParser
 from app.util.model import ResNet
 
@@ -24,7 +26,7 @@ for row, image_path in enumerate(tqdm(Config.image_files())):
         with rawpy.imread(image_path) as raw:
             image = raw.post_process()
     else:  # if file_ending in ['jpg', 'jpeg']:
-        image = cv2.imread(image_path)
+        image = cv2.imread(image_path)  # pylint: disable=no-member
 
     labels = ResNet.classify(image)
 
