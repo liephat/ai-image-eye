@@ -20,7 +20,10 @@ class ConfigParser:
             self.settings = json.load(f)
 
     def image_folder(self):
-        return self.settings['images']['folder']
+        path = self.settings['images']['folder']
+        if not os.path.isabs(path):
+            path = os.path.join(os.getcwd(), path)
+        return path
 
     def image_formats(self):
         return self.settings['images']['formats']
