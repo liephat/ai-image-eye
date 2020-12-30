@@ -5,10 +5,7 @@ from app.ui.filters import init_filters, unescape_url
 from app.util.config_parser import ConfigParser
 from app.util.data_reader import DataReader
 
-app = Flask(__name__,
-            static_url_path='',
-            static_folder='app/static',
-            template_folder='app/templates')
+app = Flask(__name__)
 api = Api(app)
 
 Config = ConfigParser()
@@ -43,4 +40,4 @@ def send_tags():
 init_filters(app)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
