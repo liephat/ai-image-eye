@@ -1,3 +1,20 @@
+# Running the React app
+
+## Requirements
+
+```shell script
+sudo apt install yarnpkg
+```
+
+## Running
+
+1. Start the Flask app
+2. Start the React app
+```shell script
+cd react-app
+yarnpkg start
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

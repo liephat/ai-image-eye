@@ -15,6 +15,11 @@ class Gallery extends React.Component {
     }
 
     componentDidMount() {
+        /* FIXME
+           HTTP request will be redirected to the Flask app because of the
+           proxy-setting in package.json. This currently only works when
+           using the development server of React.
+        */
         fetch('/all_images').then(res => res.json()).then(data => {
             console.log(data)
             this.setState({
