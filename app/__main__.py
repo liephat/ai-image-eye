@@ -32,6 +32,18 @@ def send_image(filename):
     return send_from_directory(Config.image_folder(), unescape_url(filename))
 
 
+@app.route('/all_images')
+def all_images():
+    return {
+        'images': [
+            {
+                'path': f'images/{filename}',
+                'uid': filename,
+            } for filename in ImageDataReader.filelist()
+        ]
+    }
+
+
 @app.route('/tags')
 def send_tags():
     return jsonify(Config.labels('resnet').tolist())
