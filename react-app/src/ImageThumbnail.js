@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Figure from 'react-bootstrap/Figure';
 import Col from 'react-bootstrap/Col';
 
