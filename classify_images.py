@@ -37,7 +37,7 @@ for row, image_path in enumerate(tqdm(Config.image_files())):
     rel_path = os.path.relpath(image_path, Config.image_folder())
 
     # create new row in data frame for image with path and top-5 labels
-    data.loc[row] = [uid] + [rel_path] + [labels]
+    data.loc[row] = [uid, rel_path, labels]
 
     # persist row
     data.to_csv('data.csv')
