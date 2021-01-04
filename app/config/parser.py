@@ -41,3 +41,6 @@ class ConfigParser:
         with open(self.settings['labeling'][_type]['labels']) as f:
             data = json.load(f)
         return np.asarray(data)
+
+    def data_file(self):
+        return self.settings['data']['file']

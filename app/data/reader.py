@@ -1,11 +1,9 @@
 import pandas as pd
 
-FILE = 'data.csv'
-
 
 class DataReader:
 
-    def __init__(self, file=FILE):
+    def __init__(self, file):
         self.data = pd.read_csv(file)
 
     def get_labels(self, uid):

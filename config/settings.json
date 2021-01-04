@@ -8,5 +8,8 @@
             "model": "config/models/resnet/resnet50-v2-7.onnx",
             "labels": "config/models/resnet/imagenet-simple-labels.json"
         }
+    },
+    "data": {
+        "file": "data.csv"
     }
 }

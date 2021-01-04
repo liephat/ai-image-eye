@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from app.data.ids import create_id
 from app.labeling.model import ResNet
-from app.util.config_parser import ConfigParser
+from app.config.parser import ConfigParser
 
 # Load application configurations
 Config = ConfigParser()

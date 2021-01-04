@@ -2,14 +2,15 @@ from flask import Flask, render_template, send_from_directory, jsonify
 from flask_restful import Api, Resource
 
 from app.ui.filters import init_filters, unescape_url
-from app.util.config_parser import ConfigParser
-from app.util.data_reader import DataReader
+from app.config.parser import ConfigParser
+from app.data.reader import DataReader
 
 app = Flask(__name__)
 api = Api(app)
 
+# Load application configurations
 Config = ConfigParser()
-ImageDataReader = DataReader()
+ImageDataReader = DataReader(Config.data_file())
 
 
 class ImageData(Resource):
