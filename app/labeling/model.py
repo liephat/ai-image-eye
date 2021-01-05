@@ -78,7 +78,8 @@ class ResNet(Model):
         sorted_ids = np.flip(np.squeeze(np.argsort(result)))
 
         # Create dictionary with probabilities as keys and labels as values for top 5 predictions
-        labels = dict(zip(self.labels[sorted_ids[:5]], raw_result[sorted_ids[:5]]))
+        # labels = dict(zip(self.labels[sorted_ids[:5]], raw_result[sorted_ids[:5]]))
+        labels = self.labels[sorted_ids[:5]]
 
         return labels
 
