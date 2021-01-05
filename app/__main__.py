@@ -1,31 +1,21 @@
 from flask import Flask, render_template, send_from_directory, jsonify
 from flask_restful import Api, Resource
 
+from app.data.ops import ImageDataHandler
 from app.ui.filters import init_filters, unescape_url
 from app.config.parser import ConfigParser
-from app.data.reader import DataReader
 
 app = Flask(__name__)
 api = Api(app)
 
 # Load application configurations
 Config = ConfigParser()
-ImageDataReader = DataReader(Config.data_file())
-
-
-class ImageData(Resource):
-
-    def get(self, uid):
-        return ImageDataReader.get_labels(uid)
-
-
-api.add_resource(ImageData, "/image/data/<int:uid>")
+ImageData = ImageDataHandler()
 
 
 @app.route('/')
 def index():
-    data = ImageDataReader.dict()
-    return render_template('index.html', data=data)
+    return render_template('index.html', images=ImageData.filelist())
 
 
 @app.route('/images/<filename>')
@@ -40,14 +30,9 @@ def all_images():
             {
                 'path': f'images/{filename}',
                 'uid': filename,
-            } for filename in ImageDataReader.filelist()
+            } for filename in ImageData.filelist()
         ]
     }
-
-
-@app.route('/tags')
-def send_tags():
-    return jsonify(Config.labels('resnet').tolist())
 
 
 init_filters(app)
