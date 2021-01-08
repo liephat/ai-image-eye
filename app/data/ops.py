@@ -15,7 +15,8 @@ def auto_session(Session):
     try:
         yield session
         session.commit()
-    except:
+    except Exception as e:
+        print("D'oh!", e.__class__, "occurred.")
         session.rollback()
     finally:
         session.close()
