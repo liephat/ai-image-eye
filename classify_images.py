@@ -9,16 +9,16 @@ from app.labeling.model import ResNet
 from app.config.parser import ConfigParser
 
 # Load application configurations
-Config = ConfigParser()
+config = ConfigParser()
 
 # Load ResNet model
-ResNet = ResNet(Config.model('resnet'), Config.labels('resnet'))
-ResNet.load()
+res_net = ResNet(config.model('resnet'), config.labels('resnet'))
+res_net.load()
 
 # Create data handler
-ImageData = ImageDataHandler()
+image_data = ImageDataHandler()
 
-for row, image_path in enumerate(tqdm(Config.image_files())):
+for row, image_path in enumerate(tqdm(config.image_files())):
 
     file_ending = os.path.splitext(image_path)[1].lower()
     if file_ending == 'arw':
@@ -27,10 +27,10 @@ for row, image_path in enumerate(tqdm(Config.image_files())):
     else:  # if file_ending in ['jpg', 'jpeg']:
         image = cv2.imread(image_path)  # pylint: disable=no-member
 
-    labels = ResNet.classify(image)
+    labels = res_net.classify(image)
 
     # get relative path to image
-    rel_path = os.path.relpath(image_path, Config.image_folder())
+    rel_path = os.path.relpath(image_path, config.image_folder())
 
     # create new row in data frame for image with path and top-5 labels
-    ImageData.add_new_image(rel_path, labels)
+    image_data.add_new_image(rel_path, labels)

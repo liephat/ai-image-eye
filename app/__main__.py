@@ -9,18 +9,18 @@ app = Flask(__name__)
 api = Api(app)
 
 # Load application configurations
-Config = ConfigParser()
-ImageData = ImageDataHandler()
+config = ConfigParser()
+image_data = ImageDataHandler()
 
 
 @app.route('/')
 def index():
-    return render_template('index.html', images=ImageData.filelist())
+    return render_template('index.html', images=image_data.filelist())
 
 
 @app.route('/images/<filename>')
 def send_image(filename):
-    return send_from_directory(Config.image_folder(), unescape_url(filename))
+    return send_from_directory(config.image_folder(), unescape_url(filename))
 
 
 @app.route('/all_images')
@@ -30,7 +30,7 @@ def all_images():
             {
                 'path': f'images/{filename}',
                 'uid': filename,
-            } for filename in ImageData.filelist()
+            } for filename in image_data.filelist()
         ]
     }
 
