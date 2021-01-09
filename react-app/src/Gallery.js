@@ -20,10 +20,10 @@ class Gallery extends React.Component {
            proxy-setting in package.json. This currently only works when
            using the development server of React.
         */
-        fetch('/all_images').then(res => res.json()).then(data => {
+        fetch('/api/images/all').then(res => res.json()).then(data => {
             console.log(data)
             this.setState({
-                images: data.images,
+                images: data,
                 numLoaded: 6,
             });
         });
@@ -60,7 +60,10 @@ class Gallery extends React.Component {
         <>
             <Row>
                 {this.state.images.slice(0, this.state.numLoaded).map((image, i) => {
-                    return (<ImageThumbnail key={image.uid} path={image.path} />)
+                    return (<ImageThumbnail key={image.image_id}
+                        path={image.path}
+                        name={image.file}
+                        labels={image.labels}/>)
                 })}
             </Row>
             <Row className="justify-content-center">
