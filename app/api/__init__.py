@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restx import Api
 
 from app.api.images import ImagesApi
+from app.api.types import Types
 
 
 class RestApi:
@@ -15,4 +16,5 @@ class RestApi:
                                         # https://github.com/python-restx/flask-restx/issues/249
                       doc='/api/doc')
 
+        Types.init_models(cls.API)
         ImagesApi.init(cls.API, '/api')
