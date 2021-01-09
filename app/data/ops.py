@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import contextmanager
 
@@ -8,6 +9,7 @@ from app.config.parser import ConfigParser
 from app.data.ids import create_id
 from app.data.models import Image, Label, Base
 
+logger = logging.getLogger(__name__)
 
 @contextmanager
 def auto_session(Session):
@@ -15,8 +17,8 @@ def auto_session(Session):
     try:
         yield session
         session.commit()
-    except Exception as e:
-        print("D'oh!", e.__class__, "occurred.")
+    except Exception:  # pylint: disable=broad-except
+        logger.exception('Session will be rolled back')
         session.rollback()
     finally:
         session.close()
