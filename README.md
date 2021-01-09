@@ -33,3 +33,8 @@ in your image directory.
 Run ```python -m app``` to start the application.
 
 
+## REST API
+
+The REST API can be reached under the endpoint `/api`. A documentation
+including a Swagger UI is created automatically under `/api/doc`.
+
