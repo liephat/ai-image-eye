@@ -38,3 +38,7 @@ Run ```python -m app``` to start the application.
 The REST API can be reached under the endpoint `/api`. A documentation
 including a Swagger UI is created automatically under `/api/doc`.
 
+### Useful endpoints:
+
+- `/api/images/all` ... Get all imagess
+
