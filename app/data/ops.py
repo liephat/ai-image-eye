@@ -25,6 +25,7 @@ def auto_session(Session):
 
 
 class ImageDataHandler:
+    MAIN_SESSION = None
 
     def __init__(self):
         config = ConfigParser()
@@ -35,6 +36,8 @@ class ImageDataHandler:
 
         self.Session = sessionmaker()
         self.Session.configure(bind=engine)
+        if self.MAIN_SESSION is None:
+            self.MAIN_SESSION = self.Session()
 
     def add_new_image(self, file, label_names):
         """
@@ -92,3 +95,6 @@ class ImageDataHandler:
         """
         with auto_session(self.Session) as session:
             return [file for (file,) in session.query(Image.file).all()]
+
+    def all_images(self):
+            return self.MAIN_SESSION.query(Image).all()

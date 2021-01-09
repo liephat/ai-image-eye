@@ -2,6 +2,8 @@ from typing import List, Dict
 
 from flask_restx import Api, Resource, Namespace, Model, fields
 
+from app.data.ops import ImageDataHandler
+
 
 class ImagesApi:
     NAMESPACE = 'images'
@@ -14,12 +16,18 @@ class ImagesApi:
 
     @staticmethod
     def _init_models(api: Api) -> Dict[str, Model]:
+        label = api.model('Label', dict(
+            label_id=fields.String(readOnly=True),
+            name=fields.String(readOnly=True),
+        ))
+        image = api.model('Image', dict(
+            image_id=fields.String(readOnly=True, description='Image ID'),
+            file=fields.String(readOnly=True, description='Path to the image'),
+            labels=fields.List(fields.Nested(label)),
+        ))
         models = dict(
-            Image=api.model('Image', dict(
-                id=fields.String(readOnly=True, description='Image ID'),
-                path=fields.String(readOnly=True, description='Path to the image'),
-                thumbnailPath=fields.String(readOnly=True, description='Path to the image thumbnail'),
-            ))
+            image=image,
+            label=label,
         )
         return models
 
@@ -27,9 +35,8 @@ class ImagesApi:
     def _init_endpoints(ns: Namespace, models: Dict[str, Model]):
         @ns.route('/all')
         class All(Resource):
-            @ns.marshal_list_with(models['Image'])
+            @ns.marshal_list_with(models['image'])
             def get(self):
-                return [
-                    {'id': 'the:id', 'path': 'TheFullpath', 'thumbnailPath': 'TheThumbnailPath'},
-                    {'id': 'the:id2', 'path': 'TheFullpath2', 'thumbnailPath': 'TheThumbnailPath2'},
-                ]
+                handler = ImageDataHandler()
+                all_images = handler.all_images()
+                return all_images
