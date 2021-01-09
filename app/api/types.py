@@ -1,5 +1,3 @@
-from typing import Dict
-
 from flask_restx import Api, fields, Model
 
 
