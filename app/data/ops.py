@@ -97,4 +97,7 @@ class ImageDataHandler:
             return [file for (file,) in session.query(Image.file).all()]
 
     def all_images(self):
-            return self.MAIN_SESSION.query(Image).all()
+        return self.MAIN_SESSION.query(Image).all()
+
+    def all_labels(self):
+        return self.MAIN_SESSION.query(Label).all()
