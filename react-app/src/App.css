@@ -1,0 +1,13 @@
+
+figure span.title {
+    font-size: .8em;
+}
+
+figure div.label {
+    padding: .1em .3em;
+    border-radius: .7em;
+    white-space: nowrap;
+    float: left;
+    margin-right: .5em;
+    margin-bottom: .5em;
+}

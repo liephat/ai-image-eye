@@ -1,6 +1,7 @@
 import React from 'react';
 import Figure from 'react-bootstrap/Figure';
 import Col from 'react-bootstrap/Col';
+import Label from './ui/Label';
 
 class ImageThumbnail extends React.Component {
     render() {
@@ -11,7 +12,10 @@ class ImageThumbnail extends React.Component {
                         src={this.props.path}
                      />
                     <Figure.Caption>
-                        {this.props.path}
+                        <span class="title">{this.props.name}</span><br/>
+                        {this.props.labels.map((label) => {
+                            return (<Label label={label} />);
+                        })}
                     </Figure.Caption>
                 </Figure>
             </Col>

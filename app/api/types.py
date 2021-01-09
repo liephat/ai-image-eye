@@ -1,6 +1,11 @@
 from flask_restx import Api, fields, Model
 
 
+class ImagePathField(fields.Raw):
+    def format(self, value):
+        return f'images/{value}'
+
+
 class Types:
     image: Model = None
     label: Model = None
@@ -14,5 +19,6 @@ class Types:
         cls.image = api.model('Image', dict(
             image_id=fields.String(readOnly=True, description='Image ID'),
             file=fields.String(readOnly=True, description='Path to the image'),
-            labels=fields.List(fields.Nested(cls.label)),
+            labels=fields.List(fields.Nested(cls.label), readOnly=True),
+            path=ImagePathField(readOnly=True, attribute='file'),
         ))
