@@ -2,6 +2,7 @@ import logging
 
 from flask import Flask, render_template, send_from_directory
 
+from app.api import RestApi
 from app.config.parser import ConfigParser
 from app.data.ops import ImageDataHandler
 from app.ui.filters import init_filters, unescape_url
@@ -41,5 +42,6 @@ def all_images():
 init_filters(app)
 
 if __name__ == '__main__':
+    RestApi.init(app)
     logger.info('Starting up ... welcome to flask-image-gallery')
     app.run(debug=True, port=5000)
