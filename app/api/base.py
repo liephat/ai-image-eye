@@ -8,8 +8,8 @@ class ApiBase:
     DESCRIPTION: str = ''
 
     @classmethod
-    def init(cls, api: Api, parentPath: str):
-        ns = api.namespace(cls.NAMESPACE, cls.DESCRIPTION, path=f'{parentPath}/{cls.NAMESPACE}')
+    def init(cls, api: Api, parent_path: str):
+        ns = api.namespace(cls.NAMESPACE, cls.DESCRIPTION, path=f'{parent_path}/{cls.NAMESPACE}')
         cls._init_endpoints(ns)
 
     @classmethod

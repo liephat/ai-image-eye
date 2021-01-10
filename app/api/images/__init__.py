@@ -1,5 +1,5 @@
 
-from flask_restx import Api, Resource, Namespace
+from flask_restx import Resource, Namespace
 
 from app.api.base import ApiBase
 from app.api.types import Types
@@ -12,6 +12,7 @@ class ImagesApi(ApiBase):
 
     @classmethod
     def _init_endpoints(cls, ns: Namespace):
+        # pylint: disable=unused-variable
         @ns.route('/all')
         class All(Resource):
             @ns.marshal_list_with(Types.image)

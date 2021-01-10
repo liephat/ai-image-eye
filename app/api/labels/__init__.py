@@ -11,6 +11,7 @@ class LabelsApi(ApiBase):
 
     @classmethod
     def _init_endpoints(cls, ns: Namespace):
+        # pylint: disable=unused-variable
         @ns.route('/all')
         class All(Resource):
             @ns.marshal_list_with(Types.label)
