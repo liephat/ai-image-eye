@@ -2,6 +2,8 @@ from flask_restx import Api, Namespace
 
 
 class ApiBase:
+    """ Base class for sub-APIs
+    """
     NAMESPACE: str = ''
     DESCRIPTION: str = ''
 
@@ -12,4 +14,8 @@ class ApiBase:
 
     @classmethod
     def _init_endpoints(cls, ns: Namespace):
+        """ Initialization of endpoints in the current sub API
+
+        Must be overridden in concrete class
+        """
         raise NotImplementedError()

@@ -5,6 +5,8 @@ from app.api.types import Types
 
 
 class RestApi:
+    """ Entry point for REST API definitions
+    """
     API = None
 
     @classmethod
