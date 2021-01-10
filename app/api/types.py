@@ -7,6 +7,8 @@ class ImagePathField(fields.Raw):
 
 
 class Types:
+    """ Type definitions that are to be reused in API endpoints
+    """
     image: Model = None
     label: Model = None
 

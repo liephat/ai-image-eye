@@ -44,4 +44,5 @@ init_filters(app)
 if __name__ == '__main__':
     RestApi.init(app)
     logger.info('Starting up ... welcome to flask-image-gallery')
+    logger.debug(f'\n{app.url_map}')
     app.run(debug=True, port=5000)
