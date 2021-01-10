@@ -6,7 +6,9 @@ disable=
     missing-function-docstring,
     missing-class-docstring,
     missing-module-docstring,
-    unnecessary-pass
+    unnecessary-pass,
+    too-few-public-methods,
+
 
 [FORMAT]
 max-line-length=100

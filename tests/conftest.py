@@ -11,7 +11,7 @@ TEST_DATABASE = "test_image_label.db"
 TEST_SETTINGS = {
     "images": {
         "folder": "images",
-        "formats": [ "jpg", "arw" ]
+        "formats": ["jpg", "arw"]
     },
     "labeling": {
         "resnet": {
@@ -24,6 +24,7 @@ TEST_SETTINGS = {
     }
 }
 TEST_SETTINGS_FILE = 'tests/test_settings.json'
+
 
 def _setup_test_settings():
     with open(TEST_SETTINGS_FILE, 'w') as f:
