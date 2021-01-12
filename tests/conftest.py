@@ -30,12 +30,15 @@ def _setup_test_settings():
     with open(TEST_SETTINGS_FILE, 'w') as f:
         json.dump(TEST_SETTINGS, f, indent=4)
     parser.FILE = TEST_SETTINGS_FILE
-    if os.path.isfile(TEST_DATABASE):
-        os.unlink(TEST_DATABASE)
 
 
 def _fill_test_database():
-    handler = ImageDataHandler()
+    handler = ImageDataHandler
+    handler.reset()
+
+    if os.path.isfile(TEST_DATABASE):
+        os.unlink(TEST_DATABASE)
+
     handler.add_new_image('file1.jpg', ['a', 'b', 'c'])
     handler.add_new_image('file2.jpg', ['a', 'b', 'c'])
     handler.add_new_image('file3.jpg', ['c'])

@@ -16,5 +16,4 @@ class LabelsApi(ApiBase):
         class All(Resource):
             @ns.marshal_list_with(Types.label)
             def get(self):
-                handler = ImageDataHandler()
-                return handler.all_labels()
+                return ImageDataHandler.all_labels()
