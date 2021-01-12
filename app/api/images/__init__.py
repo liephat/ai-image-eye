@@ -17,6 +17,5 @@ class ImagesApi(ApiBase):
         class All(Resource):
             @ns.marshal_list_with(Types.image)
             def get(self):
-                handler = ImageDataHandler()
-                all_images = handler.all_images()
+                all_images = ImageDataHandler.all_images()
                 return all_images

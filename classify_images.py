@@ -15,8 +15,6 @@ config = ConfigParser()
 res_net = ResNet(config.model('resnet'), config.labels('resnet'))
 res_net.load()
 
-# Create data handler
-image_data = ImageDataHandler()
 
 for row, image_path in enumerate(tqdm(config.image_files())):
 
@@ -33,4 +31,4 @@ for row, image_path in enumerate(tqdm(config.image_files())):
     rel_path = os.path.relpath(image_path, config.image_folder())
 
     # create new row in data frame for image with path and top-5 labels
-    image_data.add_new_image(rel_path, labels)
+    ImageDataHandler.add_new_image(rel_path, labels)

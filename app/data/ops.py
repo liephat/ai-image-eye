@@ -1,9 +1,11 @@
 import logging
 import os
 from contextlib import contextmanager
+from typing import Optional, ContextManager
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import sessionmaker, Session
 
 from app.config.parser import ConfigParser
 from app.data.ids import create_id
@@ -11,42 +13,69 @@ from app.data.models import Image, Label, Base
 
 logger = logging.getLogger(__name__)
 
-@contextmanager
-def auto_session(Session):
-    session = Session()
-    try:
-        yield session
-        session.commit()
-    except Exception:  # pylint: disable=broad-except
-        logger.exception('Session will be rolled back')
-        session.rollback()
-    finally:
-        session.close()
-
 
 class ImageDataHandler:
-    MAIN_SESSION = None
+    _main_session: Optional[Session] = None
+    _engine: Optional[Engine] = None
+    _session_class = None
 
-    def __init__(self):
-        config = ConfigParser()
+    @classmethod
+    def _get_main_session(cls):
+        """ The main session should be used for all database reading """
+        if cls._main_session is None:
+            cls._main_session = cls._create_session()
+        return cls._main_session
 
-        filepath = os.path.join(os.getcwd(), config.data_file())
-        engine = create_engine(f"sqlite:////{filepath}")
-        Base.metadata.create_all(bind=engine)
+    @classmethod
+    def _init_engine(cls):
+        """ On first access, the database engine and session class is initialized """
+        if cls._engine is None:
+            config = ConfigParser()
+            filepath = os.path.join(os.getcwd(), config.data_file())
+            cls._engine = create_engine(f"sqlite:////{filepath}")
+            Base.metadata.create_all(bind=cls._engine)
 
-        self.Session = sessionmaker()
-        self.Session.configure(bind=engine)
-        if self.MAIN_SESSION is None:
-            self.MAIN_SESSION = self.Session()
+            cls._session_class = sessionmaker()
+            cls._session_class.configure(bind=cls._engine)
 
-    def add_new_image(self, file, label_names):
+    @classmethod
+    def _create_session(cls):
+        cls._init_engine()
+        return cls._session_class()
+
+    @classmethod
+    def reset(cls):
+        if cls._main_session:
+            cls._main_session.close()
+            cls._main_session = None
+        if cls._engine:
+            cls._engine.dispose()
+            cls._engine = None
+        cls._session_class = None
+
+    @classmethod
+    @contextmanager
+    def auto_session(cls) -> ContextManager[Session]:
+        """ Yields a new session and commits and closes it afterwards """
+        session = cls._create_session()
+        try:
+            yield session
+            session.commit()
+        except Exception:  # pylint: disable=broad-except
+            logger.exception('Session will be rolled back')
+            session.rollback()
+        finally:
+            session.close()
+
+    @classmethod
+    def add_new_image(cls, file, label_names):
         """
         Adds an image file including its labels to the database.
         :param file: relative path to image file within the image folder
         :param label_names: list of labels describing the image
         """
 
-        with auto_session(self.Session) as session:
+        with cls.auto_session() as session:
             # Check if image exists
             image = (
                 session.query(Image)
@@ -76,12 +105,13 @@ class ImageDataHandler:
 
             image.labels += labels
 
-    def get_labellist_for_image(self, file):
+    @classmethod
+    def get_labellist_for_image(cls, file):
         """
         Returns list of labels for one image.
         :param file: relative path to image file within the image folder
         """
-        with auto_session(self.Session) as session:
+        with cls.auto_session() as session:
             image = (
                 session.query(Image)
                     .filter(Image.file == file)
@@ -89,15 +119,18 @@ class ImageDataHandler:
             )
             return [label.name for label in image.labels]
 
-    def filelist(self):
+    @classmethod
+    def filelist(cls):
         """
         Returns a list of all image files.
         """
-        with auto_session(self.Session) as session:
+        with cls.auto_session() as session:
             return [file for (file,) in session.query(Image.file).all()]
 
-    def all_images(self):
-        return self.MAIN_SESSION.query(Image).all()
+    @classmethod
+    def all_images(cls):
+        return cls._get_main_session().query(Image).all()
 
-    def all_labels(self):
-        return self.MAIN_SESSION.query(Label).all()
+    @classmethod
+    def all_labels(cls):
+        return cls._get_main_session().query(Label).all()

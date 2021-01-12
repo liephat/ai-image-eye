@@ -15,11 +15,10 @@ app = Flask(__name__)
 
 # Load application configurations
 config = ConfigParser()
-image_data = ImageDataHandler()
 
 @app.route('/')
 def index():
-    return render_template('index.html', images=image_data.filelist())
+    return render_template('index.html', images=ImageDataHandler.filelist())
 
 
 @app.route('/images/<filename>')
@@ -34,7 +33,7 @@ def all_images():
             {
                 'path': f'images/{filename}',
                 'uid': filename,
-            } for filename in image_data.filelist()
+            } for filename in ImageDataHandler.filelist()
         ]
     }
 
