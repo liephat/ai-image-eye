@@ -1,10 +1,11 @@
 from flask import Flask
 from flask_restx import Api
 
-from app.api.types import Types
+from app.web.api.types import Types
+from app.web import EndpointBase
 
 
-class RestApi:
+class RestApi(EndpointBase):
     """ Entry point for REST API definitions
     """
     API = None
@@ -19,7 +20,7 @@ class RestApi:
 
         Types.init_models(cls.API)
 
-        from app.api.images import ImagesApi
-        from app.api.labels import LabelsApi
+        from app.web.api.images import ImagesApi
+        from app.web.api.labels import LabelsApi
         ImagesApi.init(cls.API, '/api')
         LabelsApi.init(cls.API, '/api')

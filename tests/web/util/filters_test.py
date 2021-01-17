@@ -1,4 +1,4 @@
-from app.ui.filters import escape_url, unescape_url
+from app.web.util.filters import escape_url, unescape_url
 
 
 def test_escape_url():

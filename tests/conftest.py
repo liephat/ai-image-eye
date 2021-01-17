@@ -3,9 +3,11 @@ import os
 
 import pytest
 
-from app.__main__ import app
 from app.config import parser
 from app.data.ops import ImageDataHandler
+from app.web.app import AppWrapper
+
+app = AppWrapper().init_flask_app()
 
 TEST_DATABASE = "test_image_label.db"
 TEST_SETTINGS = {
