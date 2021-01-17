@@ -134,3 +134,7 @@ class ImageDataHandler:
     @classmethod
     def all_labels(cls):
         return cls._get_main_session().query(Label).all()
+
+    @classmethod
+    def get_image(cls, image_id):
+        return cls._get_main_session().query(Image).filter(Image.image_id == image_id).one_or_none()

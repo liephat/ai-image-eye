@@ -62,6 +62,7 @@ class Gallery extends React.Component {
                 {this.state.images.slice(0, this.state.numLoaded).map((image, i) => {
                     return (<ImageThumbnail key={image.image_id}
                         path={image.path}
+                        thumbnail_url={image.thumbnail_url}
                         name={image.file}
                         labels={image.labels}/>)
                 })}

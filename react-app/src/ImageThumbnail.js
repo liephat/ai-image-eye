@@ -9,7 +9,7 @@ class ImageThumbnail extends React.Component {
             <Col md={4}>
                 <Figure>
                     <Figure.Image
-                        src={this.props.path}
+                        src={this.props.thumbnail_url}
                      />
                     <Figure.Caption>
                         <span class="title">{this.props.name}</span><br/>
