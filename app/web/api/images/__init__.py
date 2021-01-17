@@ -1,8 +1,8 @@
 
 from flask_restx import Resource, Namespace
 
-from app.api.base import ApiBase
-from app.api.types import Types
+from app.web.api.base import ApiBase
+from app.web.api.types import Types
 from app.data.ops import ImageDataHandler
 
 
