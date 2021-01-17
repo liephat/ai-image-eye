@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, ForeignKey, Table, Integer
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -21,6 +22,15 @@ class Image(Base):
 
     def __repr__(self):
         return f"Image('{self.id}', '{self.image_id}', '{self.file}', '{self.labels}')"
+
+    @hybrid_property
+    def url(self):
+        return f'images/{self.file}'
+
+    @hybrid_property
+    def thumbnail_url(self):
+        from app.controller.thumbnailer import Thumbnailer
+        return Thumbnailer.get_thumbnail_url(self)
 
 
 class Label(Base):
