@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from app.config.parser import ConfigParser
 from app.data.ids import create_id
-from app.data.models import Image, Label, Base
+from app.data.models import Image, Label, Base, LabelAssignment
 
 logger = logging.getLogger(__name__)
 
@@ -68,42 +68,56 @@ class ImageDataHandler:
             session.close()
 
     @classmethod
-    def add_new_image(cls, file, label_names):
+    def add_image(cls, file):
+        session = cls._get_main_session()
+        # Does image already exist?
+        image = (
+            session.query(Image)
+                .filter(Image.file == file)
+                .one_or_none()
+        )
+        # Create image if it not exists
+        if image is None:
+            image = Image(image_id=create_id(), file=file)
+            session.add(image)
+            session.commit()
+
+        return image
+
+    @classmethod
+    def add_label(cls, label_name):
+        session = cls._get_main_session()
+        # Does label already exist?
+        label = (
+            session.query(Label)
+                .filter(Label.name == label_name)
+                .one_or_none()
+        )
+        # Create label if it not exists
+        if label is None:
+            label = Label(label_id=create_id(), name=label_name)
+            session.add(label)
+            session.commit()
+
+        return label
+
+    @classmethod
+    def add_label_assignment(cls, file, label_name, origin, confidence=None, bounding_boxes=None):
         """
-        Adds an image file including its labels to the database.
+        Adds a label assignment for an image file to the database.
         :param file: relative path to image file within the image folder
-        :param label_names: list of labels describing the image
+        :param label_name: label describing the image
+        :param origin: origin of label
+        :param confidence: confidence that label is true
+        :param bounding_boxes: coordinates of bounding box
         """
-
-        with cls.auto_session() as session:
-            # Check if image exists
-            image = (
-                session.query(Image)
-                    .filter(Image.file == file)
-                    .one_or_none()
-            )
-
-            # Get the labels
-            labels = []
-            for label_name in label_names:
-                label = (
-                    session.query(Label)
-                        .filter(Label.name == label_name)
-                        .one_or_none()
-                )
-                # Do we need to create the label?
-                if label is None:
-                    label = Label(label_id=create_id(), name=label_name)
-                    session.add(label)
-
-                labels.append(label)
-
-            # Create image if it not exists
-            if image is None:
-                image = Image(image_id=create_id(), file=file)
-                session.add(image)
-
-            image.labels += labels
+        image = cls.add_image(file)
+        label = cls.add_label(label_name)
+        session = cls._get_main_session()
+        label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
+                                           bounding_boxes=bounding_boxes)
+        session.add(label_assignment)
+        session.commit()
 
     @classmethod
     def get_labellist_for_image(cls, file):
@@ -134,6 +148,10 @@ class ImageDataHandler:
     @classmethod
     def all_labels(cls):
         return cls._get_main_session().query(Label).all()
+
+    @classmethod
+    def all_label_assignments(cls):
+        return cls._get_main_session().query(LabelAssignment).all()
 
     @classmethod
     def get_image(cls, image_id):

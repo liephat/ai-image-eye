@@ -41,11 +41,14 @@ def _fill_test_database():
     if os.path.isfile(TEST_DATABASE):
         os.unlink(TEST_DATABASE)
 
-    handler.add_new_image('file1.jpg', ['a', 'b', 'c'])
-    handler.add_new_image('file2.jpg', ['a', 'b', 'c'])
-    handler.add_new_image('file3.jpg', ['c'])
-    handler.add_new_image('file4.jpg', ['a', 'd'])
-    handler.add_new_image('file has spaces.jpg', ['a', 'b', 'c', 'd'])
+    handler.add_label_assignment('file1.jpg', 'a', 'nnet', .7)
+    handler.add_label_assignment('file2.jpg', 'a', 'nnet', .3)
+    handler.add_label_assignment('file2.jpg', 'b', 'nnet', .5)
+    handler.add_label_assignment('file3.jpg', 'c', 'dnet', .91, '{"top_left": (3, 4), "bottom_right": (8, 7)}')
+    handler.add_label_assignment('file4.jpg', 'a', 'user')
+    handler.add_label_assignment('file4.jpg', 'd', 'user')
+
+    handler.add_label_assignment('file has spaces.jpg', 'a', 'user')
 
 
 @pytest.fixture

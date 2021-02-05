@@ -31,4 +31,5 @@ for row, image_path in enumerate(tqdm(config.image_files())):
     rel_path = os.path.relpath(image_path, config.image_folder())
 
     # create new row in data frame for image with path and top-5 labels
-    ImageDataHandler.add_new_image(rel_path, labels)
+    for label in labels:
+        ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet')
