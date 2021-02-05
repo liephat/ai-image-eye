@@ -51,6 +51,26 @@ class Gallery extends React.Component {
         })
     }
 
+    _renderThumbnail(image) {
+        return (<ImageThumbnail key={image.image_id}
+            path={image.path}
+            thumbnail_url={image.thumbnail_url}
+            name={image.file}
+            labels={image.labels} />)
+    }
+
+    _thumbnailColumn(columnIndex, columnCount) {
+        return (
+            <Col>
+                {this.state.images.slice(0, this.state.numLoaded).filter((image, i) => {
+                    return (i % columnCount) === columnIndex;
+                }).map((image, i) => {
+                    return this._renderThumbnail(image)
+                })}
+            </Col>
+        )
+    }
+
     render() {
         const loadingCss = {
             height: "100px",
@@ -59,13 +79,9 @@ class Gallery extends React.Component {
         return (
         <>
             <Row>
-                {this.state.images.slice(0, this.state.numLoaded).map((image, i) => {
-                    return (<ImageThumbnail key={image.image_id}
-                        path={image.path}
-                        thumbnail_url={image.thumbnail_url}
-                        name={image.file}
-                        labels={image.labels}/>)
-                })}
+                {this._thumbnailColumn(0, 3)}
+                {this._thumbnailColumn(1, 3)}
+                {this._thumbnailColumn(2, 3)}
             </Row>
             <Row className="justify-content-center">
                 <Col xs="auto">
