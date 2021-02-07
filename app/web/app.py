@@ -44,7 +44,7 @@ class AppWrapper:
     def _init_endpoints(self):
         @self.app.route('/')
         def index():
-            return render_template('index.html', images=ImageDataHandler.filelist())
+            return render_template('index.html', images=ImageDataHandler.all_images())
 
         for endpoint_class in self.get_endpoint_classes():
             endpoint_class.init(self.app)

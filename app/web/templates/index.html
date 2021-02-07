@@ -16,11 +16,11 @@
 
   <div class="container">
     {% for image in images %}
-      {% set image_url = image | url_escape %}
+      {% set image_url = image.file | url_escape %}
       <div class="col-md-4">
         <div class="thumbnail">
           <a href=" {{url_for('send_image', filename=image_url)}}" data-toggle="lightbox" data-gallery="gallery" >
-            <img src=" {{url_for('send_image', filename=image_url)}}" title={{image}} class="img-fluid rounded">
+            <img src=" {{url_for('thumbnail', image_id=image.image_id)}}" title={{image.file}} class="img-fluid rounded">
           </a>
         </div>
       </div>
