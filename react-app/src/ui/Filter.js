@@ -18,7 +18,7 @@ class Filter extends React.Component {
                     <Form.Group>
                         <Form.Control
                             onChange={(event) => this.props.onChange(event.target.value)}
-                            placeholder="Enter label name"
+                            placeholder="Enter label name (use * as wildcard)"
                         />
                     </Form.Group>
                 </Form>
