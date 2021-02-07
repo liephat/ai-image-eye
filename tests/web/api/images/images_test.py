@@ -7,6 +7,6 @@ def test_images_all(client):
     assert len(all_images.json) > 0
     assert any(image['file'] == 'file1.jpg' for image in all_images.json)
     assert any(image['url'] == 'images/file1.jpg' for image in all_images.json)
-    assert any(set(l['name'] for l in image['labels']) == {'a', 'd'}
+    assert any(set(l['name'] for l in image['labels']) == {'l_a', 'l_d'}
                and image['file'] == 'file4.jpg'
                for image in all_images.json)
