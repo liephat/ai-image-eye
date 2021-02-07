@@ -49,7 +49,7 @@ class Thumbnailer:
         image_data = cv2.imread(src_path)
         factor = width / image_data.shape[1]
         height = round(image_data.shape[0] * factor)
-        resized_image = cv2.resize(image_data, (width, height), interpolation=cv2.INTER_LANCZOS4)
+        resized_image = cv2.resize(image_data, (width, height), interpolation=cv2.INTER_AREA)
         cv2.imwrite(dest_path, resized_image)
 
 
