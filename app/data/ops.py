@@ -159,7 +159,12 @@ class ImageDataHandler:
 
     @classmethod
     def filtered_images(cls, queryString):
-        label = cls._get_main_session().query(Label).filter(Label.name == queryString).one_or_none()
-        if label:
-            return label.images
-        return []
+        labels = []
+        if '*' in queryString:
+            likeString = queryString.replace('*', '%')
+            labels = cls._get_main_session().query(Label).filter(Label.name.like(likeString)).all()
+        else:
+            labels = cls._get_main_session().query(Label).filter(Label.name == queryString).all()
+
+        return list(set(image for label in labels for image in label.images))
+
