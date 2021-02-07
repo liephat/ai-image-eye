@@ -41,14 +41,17 @@ def _fill_test_database():
     if os.path.isfile(TEST_DATABASE):
         os.unlink(TEST_DATABASE)
 
-    handler.add_label_assignment('file1.jpg', 'a', 'nnet', .7)
-    handler.add_label_assignment('file2.jpg', 'a', 'nnet', .3)
-    handler.add_label_assignment('file2.jpg', 'b', 'nnet', .5)
-    handler.add_label_assignment('file3.jpg', 'c', 'dnet', .91, '{"top_left": (3, 4), "bottom_right": (8, 7)}')
-    handler.add_label_assignment('file4.jpg', 'a', 'user')
-    handler.add_label_assignment('file4.jpg', 'd', 'user')
+    # Add some basic image files and labels.
+    # More test specific images should be created in each test individually. Otherwise,
+    # many tests might have to be adjusted every time stuff is changed here.
+    handler.add_label_assignment('file1.jpg', 'l_a', 'nnet', .7)
+    handler.add_label_assignment('file2.jpg', 'l_a', 'nnet', .3)
+    handler.add_label_assignment('file2.jpg', 'l_b', 'nnet', .5)
+    handler.add_label_assignment('file3.jpg', 'l_c', 'dnet', .91, '{"top_left": (3, 4), "bottom_right": (8, 7)}')
+    handler.add_label_assignment('file4.jpg', 'l_a', 'user')
+    handler.add_label_assignment('file4.jpg', 'l_d', 'user')
 
-    handler.add_label_assignment('file has spaces.jpg', 'a', 'user')
+    handler.add_label_assignment('file has spaces.jpg', 'l_a', 'user')
 
 
 @pytest.fixture
