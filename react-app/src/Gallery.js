@@ -3,6 +3,7 @@ import ImageThumbnail from './ImageThumbnail';
 import Filter from './ui/Filter';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 
 class Gallery extends React.Component {
 
@@ -28,7 +29,6 @@ class Gallery extends React.Component {
 
     _loadImages(fetchFrom) {
         fetchFrom.then(res => res.json()).then(data => {
-            console.log(data)
             this.setState({
                 images: data,
                 numLoaded: 6,
@@ -87,9 +87,16 @@ class Gallery extends React.Component {
 
     render() {
         const loadingCss = {
-            height: "100px",
             margin: "30px",
         }
+        let numTotal = this.state.images.length;
+        let numLoaded = Math.min(this.state.numLoaded, numTotal);
+
+        let loadMoreButton;
+        if (numLoaded < numTotal) {
+            loadMoreButton = <Button onClick={this._loadMore}>Load more</Button>;
+        }
+
         return (
         <>
             <Row>
@@ -105,8 +112,9 @@ class Gallery extends React.Component {
             <Row className="justify-content-center">
                 <Col xs="auto">
                     <div ref={loadingRef => (this.loadingRef = loadingRef)} style={loadingCss}>
-                        ({Math.min(this.state.numLoaded, this.state.images.length)}/{this.state.images.length})
+                        ({numLoaded}/{numTotal})
                     </div>
+                    {loadMoreButton}
                 </Col>
             </Row>
         </>
