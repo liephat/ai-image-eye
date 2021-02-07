@@ -22,5 +22,7 @@ class RestApi(EndpointBase):
 
         from app.web.api.images import ImagesApi
         from app.web.api.labels import LabelsApi
+        from app.web.api.query import QueryApi
         ImagesApi.init(cls.API, '/api')
         LabelsApi.init(cls.API, '/api')
+        QueryApi.init(cls.API, '/api')
