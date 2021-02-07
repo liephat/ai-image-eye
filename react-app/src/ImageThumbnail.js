@@ -9,8 +9,8 @@ class ImageThumbnail extends React.Component {
                 <Figure.Image
                     src={this.props.thumbnail_url}
                     />
-                <Figure.Caption>
-                    <span class="title">{this.props.name}</span><br/>
+                <Figure.Caption className="text-center">
+                    <span className="title">{this.props.name}</span><br/>
                     {this.props.labels.map((label) => {
                         return (<Label label={label} />);
                     })}
