@@ -7,6 +7,11 @@
         "resnet": {
             "model": "config/models/resnet/resnet50-v2-7.onnx",
             "labels": "config/models/resnet/imagenet-simple-labels.json"
+        },
+        "yolov4": {
+            "model": "config/models/yolov4/yolov4.onnx",
+            "labels": "config/models/yolov4/coco.names",
+            "anchors": "config/models/yolov4/anchors.txt"
         }
     },
     "data": {
