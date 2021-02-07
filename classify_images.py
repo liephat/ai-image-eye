@@ -2,11 +2,14 @@ import os
 
 import cv2
 import rawpy
+import numpy as np
 from tqdm import tqdm
 
 from app.data.ops import ImageDataHandler
-from app.labeling.model import ResNet
+from app.labeling.res_net import ResNet
+from app.labeling.yolo_v4 import YoloV4
 from app.config.parser import ConfigParser
+
 
 # Load application configurations
 config = ConfigParser()
@@ -14,6 +17,10 @@ config = ConfigParser()
 # Load ResNet model
 res_net = ResNet(config.model('resnet'), config.labels('resnet'))
 res_net.load()
+
+# Load YoloV4 model
+yolo_v4 = YoloV4(config.model('yolov4'), config.labels('yolov4'))
+yolo_v4.load()
 
 
 for row, image_path in enumerate(tqdm(config.image_files())):
@@ -25,11 +32,22 @@ for row, image_path in enumerate(tqdm(config.image_files())):
     else:  # if file_ending in ['jpg', 'jpeg']:
         image = cv2.imread(image_path)  # pylint: disable=no-member
 
-    labels = res_net.classify(image)
-
     # get relative path to image
     rel_path = os.path.relpath(image_path, config.image_folder())
 
-    # create new row in data frame for image with path and top-5 labels
+    # classify image with resnet
+    labels = res_net.classify(np.copy(image))
+
+    # create new entry in database for image with relative path and top-5 labels
     for label in labels:
         ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet')
+
+    # classify image with yolov4
+
+    image = os.path.join("images", rel_path)
+
+    labels, confidences, bounding_boxes = yolo_v4.classify(image)
+
+    for label, confidence, bounding_box in labels, confidences, bounding_boxes:
+        ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence, bounding_box)
+

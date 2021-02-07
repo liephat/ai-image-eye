@@ -38,9 +38,20 @@ class ConfigParser:
         return self.settings['labeling'][_type]['model']
 
     def labels(self, _type):
-        with open(self.settings['labeling'][_type]['labels']) as f:
-            data = json.load(f)
-        return np.asarray(data)
+        fp = self.settings['labeling'][_type]['labels']
+        fe = os.path.splitext(fp)[1].lower()
+
+        with open(fp, 'r') as f:
+            if fe == '.json':
+                data = json.load(f)
+                names = np.asarray(data)
+            else:
+                names = np.asarray([name.strip('\n') for name in f.readlines()])
+
+        return names
+
+    def anchors_file(self, _type):
+        return self.settings['labeling'][_type]['anchors']
 
     def data_file(self):
         return self.settings['data']['file']
