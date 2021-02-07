@@ -1,5 +1,6 @@
 import React from 'react';
 import ImageThumbnail from './ImageThumbnail';
+import Filter from './ui/Filter';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
@@ -8,6 +9,7 @@ class Gallery extends React.Component {
     constructor(props) {
         super(props);
         this._loadMore = this._loadMore.bind(this);
+        this.onFilterChanged = this.onFilterChanged.bind(this);
         this.state = {
             images: [],
             numLoaded: 0,
@@ -20,14 +22,18 @@ class Gallery extends React.Component {
            proxy-setting in package.json. This currently only works when
            using the development server of React.
         */
-        fetch('/api/images/all').then(res => res.json()).then(data => {
+        this._loadImages(fetch('/api/images/all'));
+        this._installScrollObserver();
+    }
+
+    _loadImages(fetchFrom) {
+        fetchFrom.then(res => res.json()).then(data => {
             console.log(data)
             this.setState({
                 images: data,
                 numLoaded: 6,
             });
         });
-        this._installScrollObserver();
     }
 
     _installScrollObserver() {
@@ -61,7 +67,7 @@ class Gallery extends React.Component {
 
     _thumbnailColumn(columnIndex, columnCount) {
         return (
-            <Col>
+            <Col className="text-center">
                 {this.state.images.slice(0, this.state.numLoaded).filter((image, i) => {
                     return (i % columnCount) === columnIndex;
                 }).map((image, i) => {
@@ -69,6 +75,14 @@ class Gallery extends React.Component {
                 })}
             </Col>
         )
+    }
+
+    onFilterChanged(filterString) {
+        if (filterString) {
+            this._loadImages(fetch('/api/query/images/' + filterString));
+        } else {
+            this._loadImages(fetch('/api/images/all'));
+        }
     }
 
     render() {
@@ -79,6 +93,11 @@ class Gallery extends React.Component {
         return (
         <>
             <Row>
+                <Col>
+                    <Filter onChange={this.onFilterChanged}/>
+                </Col>
+            </Row>
+            <Row>
                 {this._thumbnailColumn(0, 3)}
                 {this._thumbnailColumn(1, 3)}
                 {this._thumbnailColumn(2, 3)}
@@ -86,7 +105,7 @@ class Gallery extends React.Component {
             <Row className="justify-content-center">
                 <Col xs="auto">
                     <div ref={loadingRef => (this.loadingRef = loadingRef)} style={loadingCss}>
-                        ({this.state.numLoaded}/{this.state.images.length})
+                        ({Math.min(this.state.numLoaded, this.state.images.length)}/{this.state.images.length})
                     </div>
                 </Col>
             </Row>

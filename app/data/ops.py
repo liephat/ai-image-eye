@@ -156,3 +156,10 @@ class ImageDataHandler:
     @classmethod
     def get_image(cls, image_id):
         return cls._get_main_session().query(Image).filter(Image.image_id == image_id).one_or_none()
+
+    @classmethod
+    def filtered_images(cls, queryString):
+        label = cls._get_main_session().query(Label).filter(Label.name == queryString).one_or_none()
+        if label:
+            return label.images
+        return []
