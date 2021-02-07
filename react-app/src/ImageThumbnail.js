@@ -1,6 +1,7 @@
 import React from 'react';
 import Figure from 'react-bootstrap/Figure';
 import Label from './ui/Label';
+import { flaskUrl } from './constants';
 
 class ImageThumbnail extends React.Component {
     constructor(props) {
@@ -16,7 +17,7 @@ class ImageThumbnail extends React.Component {
         return (
             <Figure>
                 <Figure.Image
-                    src={this.props.thumbnail_url}
+                    src={flaskUrl(this.props.thumbnail_url)}
                     />
                 <Figure.Caption className="text-center">
                     <span className="title">{this.props.name}</span><br/>

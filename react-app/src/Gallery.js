@@ -4,6 +4,7 @@ import Filter from './ui/Filter';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import { flaskUrl } from './constants';
 
 class Gallery extends React.Component {
 
@@ -23,7 +24,7 @@ class Gallery extends React.Component {
            proxy-setting in package.json. This currently only works when
            using the development server of React.
         */
-        this._loadImages(fetch('/api/images/all'));
+        this._loadImages(fetch(flaskUrl('api/images/all')));
         this._installScrollObserver();
     }
 
@@ -79,9 +80,9 @@ class Gallery extends React.Component {
 
     onFilterChanged(filterString) {
         if (filterString) {
-            this._loadImages(fetch('/api/query/images/' + filterString));
+            this._loadImages(fetch(flaskUrl('api/query/images/' + filterString)));
         } else {
-            this._loadImages(fetch('/api/images/all'));
+            this._loadImages(fetch(flaskUrl('api/images/all')));
         }
     }
 
