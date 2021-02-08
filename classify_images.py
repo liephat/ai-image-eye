@@ -43,11 +43,7 @@ for row, image_path in enumerate(tqdm(config.image_files())):
         ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet')
 
     # classify image with yolov4
+    labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
 
-    image = os.path.join("images", rel_path)
-
-    labels, confidences, bounding_boxes = yolo_v4.classify(image)
-
-    for label, confidence, bounding_box in labels, confidences, bounding_boxes:
-        ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence, bounding_box)
-
+    for (label, confidence, bounding_box) in zip(labels, confidences, bounding_boxes):
+        ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence, str(bounding_box))
