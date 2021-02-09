@@ -21,11 +21,10 @@ class ResNet(Model):
         # get indices that sort the result list, remove its single dimensions and reverse its order
         sorted_ids = np.flip(np.squeeze(np.argsort(result)))
 
-        # Create dictionary with probabilities as keys and labels as values for top 5 predictions
-        # labels = dict(zip(self.labels[sorted_ids[:5]], raw_result[sorted_ids[:5]]))
         labels = self.labels[sorted_ids[:5]]
+        confidences = raw_result[sorted_ids[:5]]
 
-        return labels
+        return labels, confidences
 
     @staticmethod
     def _postprocess(raw_result):

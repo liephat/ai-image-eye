@@ -36,11 +36,11 @@ for row, image_path in enumerate(tqdm(config.image_files())):
     rel_path = os.path.relpath(image_path, config.image_folder())
 
     # classify image with resnet
-    labels = res_net.classify(np.copy(image))
+    labels, confidences = res_net.classify(np.copy(image))
 
     # create new entry in database for image with relative path and top-5 labels
-    for label in labels:
-        ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet')
+    for (label, confidence) in zip(labels, confidences):
+        ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet', confidence)
 
     # classify image with yolov4
     labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
