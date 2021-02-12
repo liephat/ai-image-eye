@@ -23,7 +23,8 @@ Run ```pip install -r requirements.txt``` in project directory.
 
 ResNet source: https://github.com/onnx/models/blob/master/vision/classification/resnet/model/resnet50-v2-7.onnx
 
-## Run instructions
+
+## Run instructions (Backend: flask-app)
 Make sure you have saved the ResNet model and its label dictionary to a directory, e.g. ```/config/models/resnet```. 
 The paths to these files and the path to the directory of your images must be defined in ```/config/settings.json```.
 
@@ -31,6 +32,11 @@ Run ```python classify_images.py```. The script creates a file ```data.csv``` co
 in your image directory.
 
 Run ```python -m app``` to start the application.
+
+
+## Run instructions (Frontend: react-app)
+
+See [react-app README](react-app/README.md)
 
 
 ## REST API

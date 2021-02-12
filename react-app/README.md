@@ -9,11 +9,43 @@ sudo apt install yarnpkg
 ## Running
 
 1. Start the Flask app
-2. Start the React app
+2. Either start the React app in a shell:
 ```shell script
 cd react-app
+yarnpkg install  # before first start and whenever yarn.lock changes
 yarnpkg start
 ```
+
+or in VSCode as task (tasks.json) by hitting `Ctrl-Shift-B`:
+
+```json
+{
+    "label": "yarnpkg start",
+    "type": "shell",
+    "command": "yarnpkg install && yarnpkg start",
+    "group": "build",
+    "options": {
+        "cwd": "react-app"
+    }
+}
+```
+
+## Debugging in Visual Studio Code
+
+1. Start the app as described above
+2. Launch a Chrome debugging session. Add this to launch.json:
+
+```json
+{
+    "type": "chrome",
+    "request": "launch",
+    "name": "react-app",
+    "url": "http://localhost:3000",
+    "webRoot": "${workspaceFolder}/react-app"
+}
+```
+
+---
 
 # Getting Started with Create React App
 
