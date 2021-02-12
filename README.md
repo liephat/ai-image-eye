@@ -48,3 +48,16 @@ including a Swagger UI is created automatically under `/api/doc`.
 
 - `/api/images/all` ... Get all imagess
 
+# Docker
+
+## Create Docker image
+
+```shell script
+sudo docker build -t imagegallery:latest .
+```
+
+## Run Docker image
+
+```shell script
+sudo docker run -p 5000:5000 imagegallery
+```
