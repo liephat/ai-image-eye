@@ -15,6 +15,6 @@
         }
     },
     "data": {
-        "file": "image_label.db"
+        "file": "config/image_label.db"
     }
 }
