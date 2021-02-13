@@ -58,6 +58,14 @@ sudo docker build -t imagegallery:latest .
 
 ## Run Docker image
 
+*not recommended, because volumes not specified. Better use docker-compose*
+
 ```shell script
-sudo docker run -p 5000:5000 imagegallery
+sudo docker run -p 5000:80 --memory=1g imagegallery
+```
+
+## Alternatively, via docker-compose
+
+```shell script
+sudo docker-compose up
 ```
