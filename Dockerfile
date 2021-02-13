@@ -14,6 +14,8 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 # TODO: initialize react-app
 
+EXPOSE 5000
+
 # TODO: run flask app not from dev server but from nginx
 CMD ["python", "-m", "app"]
 
