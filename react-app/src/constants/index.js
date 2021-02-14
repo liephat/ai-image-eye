@@ -1,7 +1,13 @@
 
 // hostname in dev environment
-export const FLASK_HOST = "http://localhost:5000/";
+function getFlaskHost() {
+    let host = process.env.REACT_APP_FLASK_HOST;
+    if (host !== undefined) {
+        return host;
+    }
+    return window.location.origin + '/';
+}
 
 export function flaskUrl(path) {
-    return FLASK_HOST + path;
+    return getFlaskHost() + path;
 }
