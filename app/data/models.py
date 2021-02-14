@@ -18,7 +18,7 @@ class Image(Base):
 
     @hybrid_property
     def url(self):
-        return f'images/{self.file}'
+        return f'/images/{self.file}'
 
     @hybrid_property
     def thumbnail_url(self):
