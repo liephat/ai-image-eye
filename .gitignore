@@ -2,3 +2,5 @@
 image_label.db
 /tests/test_settings.json
 /test_image_label.db
+/.vscode/settings.json
+/images
