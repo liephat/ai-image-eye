@@ -3,6 +3,7 @@ import os
 from typing import Type, List, Optional
 
 from flask import Flask, render_template
+from flask.helpers import get_debug_flag
 from flask_cors import CORS
 
 from app.web.api import RestApi
@@ -25,9 +26,9 @@ class AppWrapper:
     def get_endpoint_classes(cls) -> List[Type[EndpointBase]]:
         return [ImagesEndpoints, RestApi]
 
-    def __init__(self, debug=False):
+    def __init__(self):
         self.app: Optional[Flask] = None
-        self.debug = debug
+        self.debug = get_debug_flag()
 
     def init_flask_app(self):
         assert self.app is None
