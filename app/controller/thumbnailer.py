@@ -33,7 +33,7 @@ class Thumbnailer:
 
     @classmethod
     def get_thumbnail_url(cls, image: 'Image'):
-        return f'thumbnails/{image.image_id}'
+        return f'/thumbnails/{image.image_id}'
 
     @classmethod
     def get_thumbnail(cls, image_id, image_base_path):
