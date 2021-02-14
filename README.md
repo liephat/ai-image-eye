@@ -83,5 +83,5 @@ sudo docker-compose up
 *not recommended, because volumes not specified. Better use docker-compose*
 
 ```shell script
-sudo docker run -p 5000:80 --memory=1g imagegallery
+sudo docker run -p 5050:80 --memory=1g imagegallery
 ```
