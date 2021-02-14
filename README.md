@@ -70,6 +70,8 @@ Before creating the Docker image, the React App should be packaged for deploymen
 sudo docker build -t imagegallery:latest .
 ```
 
+See `build-docker.sh`.
+
 ## Run Docker image
 ### via docker-compose
 
