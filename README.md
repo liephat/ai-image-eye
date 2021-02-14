@@ -50,22 +50,36 @@ including a Swagger UI is created automatically under `/api/doc`.
 
 # Docker
 
+The Docker image is based on an nginx image that will contain
+
+* The Flask backend served on port 80 at the root
+* The React App frontend at URL `/static/ui`
+
+The following volumes need to be mounted:
+
+* `config`: contains the settings.json, image database and image processing models
+* `images`: directory with images
+
+This is taken care of in `docker-compose.yml`.
+
 ## Create Docker image
+
+Before creating the Docker image, the React App should be packaged for deployment using `yarnpkg build`.
 
 ```shell script
 sudo docker build -t imagegallery:latest .
 ```
 
 ## Run Docker image
+### via docker-compose
 
+```shell script
+sudo docker-compose up
+```
+
+### directly with docker run
 *not recommended, because volumes not specified. Better use docker-compose*
 
 ```shell script
 sudo docker run -p 5000:80 --memory=1g imagegallery
-```
-
-## Alternatively, via docker-compose
-
-```shell script
-sudo docker-compose up
 ```

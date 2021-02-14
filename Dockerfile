@@ -3,7 +3,6 @@ FROM tiangolo/uwsgi-nginx-flask:python3.8
 LABEL maintainer="The Flask Image Gallery Team"
 
 COPY ./app /app
-# COPY ./react-app /react-app
 COPY ./requirements.txt /requirements.txt
 
 WORKDIR /
@@ -15,6 +14,7 @@ RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 # TODO: initialize react-app
+COPY ./react-app/build /app/web/static/ui
 
 
 # Run Flask app from nginx
