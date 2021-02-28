@@ -50,7 +50,8 @@ class YoloV4(Model):
         bounding_boxes = []
         confidences = []
         for _, bbox in enumerate(result):
-            coor = np.array(bbox[:4], dtype=np.int32)
+            coor_orig = np.array(bbox[:4], dtype=np.int32)
+            coor = self._normalize_coordinates(coor_orig, original_image)
             c1, c2 = (coor[0], coor[1]), (coor[2], coor[3])
 
             labels.append(self.labels[int(bbox[5])])
@@ -85,6 +86,14 @@ class YoloV4(Model):
         bboxes = self._nms(bboxes, 0.213, method='nms')
 
         return bboxes
+
+    def _normalize_coordinates(self, coords, original_image):
+        """ Normalizes coordinate values from pixels to values between 0 and 1
+
+        :param coords: array of coordinates where values are alternating between x and y
+        """
+        original_image_size = original_image.shape[:2]
+        return [c / original_image_size[i % 2] for i, c in enumerate(coords)]
 
     def _postprocess_bbbox(self, pred_bbox):
         """
