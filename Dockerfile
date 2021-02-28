@@ -5,20 +5,19 @@ LABEL maintainer="The Flask Image Gallery Team"
 
 # Install dependencies for opencv
 RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6  -y
-
-
-# Copy the Flask app
-COPY ./app /app
-COPY ./requirements.txt /requirements.txt
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 
 WORKDIR /
 
+# Install Python Environment
+COPY ./requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+# Copy the Flask app
+COPY ./app app
 
 # Copy the React app
-COPY ./react-app/build /app/web/static/ui
+COPY ./react-app/build app/web/static/ui
 
 
 # Definitions for nginx
