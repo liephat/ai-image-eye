@@ -46,4 +46,5 @@ for row, image_path in enumerate(tqdm(config.image_files())):
     labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
 
     for (label, confidence, bounding_box) in zip(labels, confidences, bounding_boxes):
-        ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence, str(bounding_box))
+        ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence,
+                                              repr(bounding_box))

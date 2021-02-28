@@ -9,8 +9,8 @@ class ImageThumbnail extends React.Component {
         this.labelKey = this.labelKey.bind(this);
     }
 
-    labelKey(label) {
-        return this.props.name + label.name;
+    labelKey(label_assignment) {
+        return this.props.name + '__' + label_assignment.label_assignment_id;
     }
 
     render() {
@@ -21,8 +21,8 @@ class ImageThumbnail extends React.Component {
                     />
                 <Figure.Caption className="text-center">
                     <span className="title">{this.props.name}</span><br/>
-                    {this.props.labels.map((label) => {
-                        return (<Label label={label} key={this.labelKey(label)} />);
+                    {this.props.label_assignments.map((la) => {
+                        return (<Label label={la.label} key={this.labelKey(la)} />);
                     })}
                 </Figure.Caption>
             </Figure>

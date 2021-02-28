@@ -1,3 +1,5 @@
+import ast
+
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, DateTime, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
@@ -12,6 +14,7 @@ class Image(Base):
     image_id = Column(String, nullable=False)
     file = Column(String, nullable=False, unique=True)
     labels = relationship("Label", secondary="label_assignment")
+    label_assignments = relationship('LabelAssignment')
 
     def __repr__(self):
         return f"Image('{self.id}', '{self.image_id}', '{self.file}', '{self.labels}')"
@@ -40,6 +43,8 @@ class Label(Base):
 class LabelAssignment(Base):
     __tablename__ = "label_assignment"
     id = Column(Integer, primary_key=True)
+    label_assignment_id = Column(String, nullable=False)
+
     image_id = Column(String, ForeignKey("image.image_id"))
     label_id = Column(String, ForeignKey("label.label_id"))
     origin = Column(String(256), nullable=False)
@@ -47,9 +52,17 @@ class LabelAssignment(Base):
     confidence = Column(Float)
     bounding_boxes = Column(String)
 
-    image = relationship("Image", backref=backref("image_assoc"))
-    label = relationship("Label", backref=backref("label_assoc"))
+    image = relationship("Image", backref=backref("image"))
+    label = relationship("Label", backref=backref("label"))
 
     def __repr__(self):
-        return f"Label('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin}', '{self.creation_time}', " \
-               f"'{self.confidence}', '{self.bounding_boxes}')"
+        return f"Label('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin}', " \
+               f"'{self.creation_time}', '{self.confidence}', '{self.bounding_boxes}')"
+
+    @hybrid_property
+    def box(self):
+        try:
+            (top, left), (bottom, right) = ast.literal_eval(self.bounding_boxes)
+            return dict(top=top, left=left, bottom=bottom, right=right)
+        except ValueError:
+            return None

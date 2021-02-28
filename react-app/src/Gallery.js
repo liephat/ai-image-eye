@@ -63,7 +63,7 @@ class Gallery extends React.Component {
             path={image.path}
             thumbnail_url={image.thumbnail_url}
             name={image.file}
-            labels={image.labels} />)
+            label_assignments={image.label_assignments} />)
     }
 
     _thumbnailColumn(columnIndex, columnCount) {
