@@ -18,8 +18,26 @@ figure div.label {
 }
 
 .label-box {
-    border: 2px solid red;
+    border: 2px solid #333;
     position: absolute;
-    color: red;
+    color: #333;
     font-size: small;
+    background-color: #ffffff22;
+    box-shadow: 1px 1px 15px #00000044;
+
+    border-radius: .5em;
+    text-align: left;
+    line-height: 1;
+}
+
+.label-box div.label-name {
+    background-color: #ffffff99;
+    border-radius: 0 .5em 0 .5em;
+    position: absolute;
+    bottom: 0;
+    padding: 0.2em;
+}
+
+.figure-img {
+    margin: 0;
 }

@@ -20,7 +20,9 @@ class LabeledImage extends React.Component {
                 bottom: la.box.bottom + '%',
                 right: la.box.right + '%',
             };
-            return (<div class='label-box' style={style}>{la.label.name}</div>);
+            return (<div class='label-box' style={style}>
+                <div class='label-name'>{la.label.name}</div>
+            </div>);
         }
         return (<></>);
     }
