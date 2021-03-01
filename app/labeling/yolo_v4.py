@@ -92,7 +92,7 @@ class YoloV4(Model):
 
         :param coords: array of coordinates where values are alternating between x and y
         """
-        original_image_size = original_image.shape[:2]
+        original_image_size = list(reversed(original_image.shape[:2]))
         return [c / original_image_size[i % 2] for i, c in enumerate(coords)]
 
     def _postprocess_bbbox(self, pred_bbox):
