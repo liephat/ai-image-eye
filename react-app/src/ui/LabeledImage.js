@@ -15,10 +15,10 @@ class LabeledImage extends React.Component {
     _renderBox(la) {
         if (la.box) {
             let style = {
-                top: la.box.top * 100 + '%',
-                left: la.box.left * 100 + '%',
-                bottom: (100 - la.box.bottom * 100) + '%',
-                right: (100 - la.box.right * 100) + '%',
+                top: la.box.top + '%',
+                left: la.box.left + '%',
+                bottom: la.box.bottom + '%',
+                right: la.box.right + '%',
             };
             return (<div class='label-box' style={style}>{la.label.name}</div>);
         }

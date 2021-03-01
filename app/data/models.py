@@ -63,6 +63,6 @@ class LabelAssignment(Base):
     def box(self):
         try:
             (left, top), (right, bottom) = ast.literal_eval(self.bounding_boxes)
-            return dict(top=top, left=left, bottom=bottom, right=right)
+            return dict(top=top*100, left=left*100, bottom=100-bottom*100, right=100-right*100)
         except ValueError:
             return None
