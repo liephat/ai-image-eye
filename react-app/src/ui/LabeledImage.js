@@ -20,11 +20,11 @@ class LabeledImage extends React.Component {
                 bottom: la.box.bottom + '%',
                 right: la.box.right + '%',
             };
-            return (<div class='label-box' style={style}>
-                <div class='label-name'>{la.label.name}</div>
+            return (<div className='label-box' style={style} key={la.label_assignment_id}>
+                <div className='label-name'>{la.label.name}</div>
             </div>);
         }
-        return (<></>);
+        return null;
     }
 
     render() {
@@ -39,11 +39,11 @@ class LabeledImage extends React.Component {
                 if (la.label_assignment_id === laId || true) {
                     return this._renderBox(la);
                 }
-                return (<></>);
+                return null;
             });
         }
 
-        return (<div class='image-label-parent'>{image}{overlay}</div>);
+        return (<div className='image-label-parent'>{image}{overlay}</div>);
     }
 }
 
