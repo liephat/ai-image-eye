@@ -1,6 +1,7 @@
 import React from 'react';
 import Figure from 'react-bootstrap/Figure';
 import Label from './ui/Label';
+import LabeledImage from './ui/LabeledImage';
 import { flaskUrl } from './constants';
 
 class ImageThumbnail extends React.Component {
@@ -16,13 +17,11 @@ class ImageThumbnail extends React.Component {
     render() {
         return (
             <Figure>
-                <Figure.Image
-                    src={flaskUrl(this.props.thumbnail_url)}
-                    />
+                <LabeledImage url={flaskUrl(this.props.thumbnail_url)} labelAssignments={this.props.label_assignments} />
                 <Figure.Caption className="text-center">
                     <span className="title">{this.props.name}</span><br/>
                     {this.props.label_assignments.map((la) => {
-                        return (<Label label={la.label} key={this.labelKey(la)} />);
+                        return (<Label label_assignment={la} key={this.labelKey(la)} />);
                     })}
                 </Figure.Caption>
             </Figure>

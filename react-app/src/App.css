@@ -11,3 +11,15 @@ figure div.label {
     margin-right: .5em;
     margin-bottom: .5em;
 }
+
+
+.image-label-parent {
+    position: relative;
+}
+
+.label-box {
+    border: 2px solid red;
+    position: absolute;
+    color: red;
+    font-size: small;
+}
