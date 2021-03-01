@@ -62,7 +62,7 @@ class LabelAssignment(Base):
     @hybrid_property
     def box(self):
         try:
-            (top, left), (bottom, right) = ast.literal_eval(self.bounding_boxes)
+            (left, top), (right, bottom) = ast.literal_eval(self.bounding_boxes)
             return dict(top=top, left=left, bottom=bottom, right=right)
         except ValueError:
             return None

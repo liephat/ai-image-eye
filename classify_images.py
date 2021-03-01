@@ -53,6 +53,7 @@ if __name__ == '__main__':
     config = ConfigParser()
 
     if os.path.exists(config.data_file()):
+        # delete present database in order to fully rebuild it preventing redundant data
         os.remove(config.data_file())
 
     run_classifiers(config)
