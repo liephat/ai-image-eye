@@ -114,8 +114,9 @@ class ImageDataHandler:
         image = cls.add_image(file)
         label = cls.add_label(label_name)
         session = cls._get_main_session()
-        label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
-                                           bounding_boxes=bounding_boxes)
+        label_assignment = LabelAssignment(image=image, label=label, origin=origin,
+                                           confidence=confidence, bounding_boxes=bounding_boxes,
+                                           label_assignment_id=create_id())
         session.add(label_assignment)
         session.commit()
 

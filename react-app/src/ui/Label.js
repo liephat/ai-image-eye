@@ -16,7 +16,7 @@ class Label extends React.Component {
         return (
             <>
                 <div className='label' style={this.calculateStyle()}>
-                    {this.props.label.name}
+                    {this.props.label_assignment.label.name}
                 </div>
             </>
         );

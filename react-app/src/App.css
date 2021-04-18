@@ -11,3 +11,39 @@ figure div.label {
     margin-right: .5em;
     margin-bottom: .5em;
 }
+
+
+.image-label-parent {
+    position: relative;
+}
+
+.label-box {
+    position: absolute;
+    color: #333;
+    font-size: small;
+    background-color: #ffffff44;
+    box-shadow: 1px 1px 15px #00000044;
+    border: 2px solid #333;
+
+    border-radius: .5em;
+    text-align: left;
+    line-height: 1;
+    opacity: .3;
+    cursor: pointer;
+}
+
+.label-box:hover {
+    opacity: 1;
+}
+
+.label-box div.label-name {
+    background-color: #ffffffaa;
+    border-radius: 0 .5em 0 .5em;
+    position: absolute;
+    bottom: 0;
+    padding: 0.2em;
+}
+
+.figure-img {
+    margin: 0;
+}
