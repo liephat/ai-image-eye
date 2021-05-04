@@ -4,3 +4,5 @@ image_label.db
 /test_image_label.db
 /.vscode/settings.json
 /images
+venv
+*.pyc

@@ -44,6 +44,7 @@ figure div.label {
     padding: 0.2em;
 }
 
-.figure-img {
+.figure-img.thumbnail {
     margin: 0;
+    width: 100%;
 }

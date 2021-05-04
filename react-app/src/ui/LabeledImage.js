@@ -30,6 +30,7 @@ class LabeledImage extends React.Component {
     render() {
         let image = (<Figure.Image
             src={this.url}
+            className='thumbnail'
         />);
         let laId = this.state.highlightedLabelId;
         let overlay = (<></>);
