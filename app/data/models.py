@@ -13,8 +13,8 @@ class Image(Base):
     id = Column(Integer, primary_key=True)
     image_id = Column(String, nullable=False)
     file = Column(String, nullable=False, unique=True)
-    labels = relationship("Label", secondary="label_assignment")
-    label_assignments = relationship('LabelAssignment')
+    labels = relationship("Label", secondary="label_assignment", viewonly=True)
+    label_assignments = relationship('LabelAssignment', viewonly=True)
 
     def __repr__(self):
         return f"Image('{self.id}', '{self.image_id}', '{self.file}', '{self.labels}')"
@@ -34,7 +34,7 @@ class Label(Base):
     id = Column(Integer, primary_key=True)
     label_id = Column(String, nullable=False)
     name = Column(String, nullable=False, unique=True)
-    images = relationship("Image", secondary="label_assignment")
+    images = relationship("Image", secondary="label_assignment", viewonly=True)
 
     def __repr__(self):
         return f"Label('{self.id}', '{self.label_id}', '{self.name}')"
