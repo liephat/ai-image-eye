@@ -1,7 +1,7 @@
 import logging
 import os
 from contextlib import contextmanager
-from typing import Optional, ContextManager
+from typing import Optional, ContextManager, List
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
@@ -20,7 +20,7 @@ class ImageDataHandler:
     _session_class = None
 
     @classmethod
-    def _get_main_session(cls):
+    def _get_main_session(cls) -> Session:
         """ The main session should be used for all database reading """
         if cls._main_session is None:
             cls._main_session = cls._create_session()
@@ -68,7 +68,7 @@ class ImageDataHandler:
             session.close()
 
     @classmethod
-    def add_image(cls, file):
+    def add_image(cls, file: str):
         # Does image already exist?
         image = cls.get_image(file)
         # Create image if it not exists
@@ -81,7 +81,7 @@ class ImageDataHandler:
         return image
 
     @classmethod
-    def add_label(cls, label_name):
+    def add_label(cls, label_name: str):
         # Does label already exist?
         label = cls.get_label(label_name)
         # Create label if it not exists
@@ -94,7 +94,7 @@ class ImageDataHandler:
         return label
 
     @classmethod
-    def add_origin(cls, origin_name):
+    def add_origin(cls, origin_name: str):
         # Does origin already exist?
         origin = cls.get_origin(origin_name)
         # Create label if it not exists
@@ -107,7 +107,7 @@ class ImageDataHandler:
         return origin
 
     @classmethod
-    def add_label_assignment(cls, file, label_name, origin_name, confidence=None, bounding_boxes=None):
+    def add_label_assignment(cls, file: str, label_name: str, origin_name: str, confidence=None, bounding_boxes=None):
         """
         Adds a label assignment for an image file to the database.
         :param file: relative path to image file within the image folder
@@ -127,23 +127,23 @@ class ImageDataHandler:
         session.commit()
 
     @classmethod
-    def get_image_by_id(cls, image_id):
+    def get_image_by_id(cls, image_id: str):
         return cls._get_main_session().query(Image).filter(Image.image_id == image_id).one_or_none()
     
     @classmethod
-    def get_image(cls, file):
+    def get_image(cls, file: str):
         return cls._get_main_session().query(Image).filter(Image.file == file).one_or_none()
 
     @classmethod
-    def get_label(cls, label_name):
+    def get_label(cls, label_name: str):
         return cls._get_main_session().query(Label).filter(Label.name == label_name).one_or_none()
 
     @classmethod
-    def get_origin(cls, origin_name):
+    def get_origin(cls, origin_name: str):
         return cls._get_main_session().query(Origin).filter(Origin.name == origin_name).one_or_none()
 
     @classmethod
-    def get_labels_of_image(cls, file):
+    def get_labels_of_image(cls, file) -> List[str]:
         """
         Returns list of labels for one image.
         :param file: relative path to image file within the image folder
@@ -157,7 +157,7 @@ class ImageDataHandler:
             return [label.name for label in image.labels]
 
     @classmethod
-    def get_assignments_from_origin(cls, file, origin_name):
+    def get_assignments_from_origin(cls, file: str, origin_name: str) -> List[LabelAssignment]:
         """
         Returns a list of label assignments of an image that originate from a defined source.
         :param origin_name: origin of label assignment
@@ -178,7 +178,7 @@ class ImageDataHandler:
         return label_assignments
 
     @classmethod
-    def filelist(cls):
+    def filelist(cls) -> List[str]:
         """
         Returns a list of all image files.
         """
@@ -186,24 +186,24 @@ class ImageDataHandler:
             return [file for (file,) in session.query(Image.file).all()]
 
     @classmethod
-    def all_images(cls):
+    def all_images(cls) -> List[Image]:
         return cls._get_main_session().query(Image).all()
 
     @classmethod
-    def all_labels(cls):
+    def all_labels(cls) -> List[Label]:
         return cls._get_main_session().query(Label).all()
 
     @classmethod
-    def all_label_assignments(cls):
+    def all_label_assignments(cls) -> List[LabelAssignment]:
         return cls._get_main_session().query(LabelAssignment).all()
 
     @classmethod
-    def filtered_images(cls, queryString):
-        if '*' in queryString:
-            likeString = queryString.replace('*', '%')
-            labels = cls._get_main_session().query(Label).filter(Label.name.like(likeString)).all()
+    def filtered_images(cls, query_string: str) -> List[Image]:
+        if '*' in query_string:
+            like_string = query_string.replace('*', '%')
+            labels = cls._get_main_session().query(Label).filter(Label.name.like(like_string)).all()
         else:
-            labels = cls._get_main_session().query(Label).filter(Label.name == queryString).all()
+            labels = cls._get_main_session().query(Label).filter(Label.name == query_string).all()
 
         return list(set(image for label in labels for image in label.images))
 
