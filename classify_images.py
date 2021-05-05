@@ -21,7 +21,6 @@ def run_classifiers(config: ConfigParser):
     yolo_v4 = YoloV4(config.model('yolov4'), config.labels('yolov4'))
     yolo_v4.load()
 
-
     for row, image_path in enumerate(tqdm(config.image_files())):
 
         file_ending = os.path.splitext(image_path)[1].lower()
@@ -34,26 +33,27 @@ def run_classifiers(config: ConfigParser):
         # get relative path to image
         rel_path = os.path.relpath(image_path, config.image_folder())
 
-        # classify image with resnet
-        labels, confidences = res_net.classify(np.copy(image))
+        origin = 'ResNet_ImageNet'
+        if not ImageDataHandler.get_assignments_from_origin(rel_path, origin):
+            # classify image with resnet
+            labels, confidences = res_net.classify(np.copy(image))
 
-        # create new entry in database for image with relative path and top-5 labels
-        for (label, confidence) in zip(labels, confidences):
-            ImageDataHandler.add_label_assignment(rel_path, label, 'ResNet_ImageNet', confidence)
+            # create new entry in database for image with relative path and top-5 labels
+            for (label, confidence) in zip(labels, confidences):
+                ImageDataHandler.add_label_assignment(rel_path, label, origin, confidence)
 
-        # classify image with yolov4
-        labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
+        origin = 'YoloV4_COCO'
+        if not ImageDataHandler.get_assignments_from_origin(rel_path, origin):
+            # classify image with yolov4
+            labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
 
-        for (label, confidence, bounding_box) in zip(labels, confidences, bounding_boxes):
-            ImageDataHandler.add_label_assignment(rel_path, label, 'YoloV4_COCO', confidence,
-                                                  repr(bounding_box))
+            for (label, confidence, bounding_box) in zip(labels, confidences, bounding_boxes):
+                ImageDataHandler.add_label_assignment(rel_path, label, origin, confidence,
+                                                      repr(bounding_box))
+
 
 if __name__ == '__main__':
     # Load application configurations
     config = ConfigParser()
-
-    if os.path.exists(config.data_file()):
-        # delete present database in order to fully rebuild it preventing redundant data
-        os.remove(config.data_file())
 
     run_classifiers(config)
