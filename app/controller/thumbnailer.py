@@ -39,7 +39,7 @@ class Thumbnailer:
     def get_thumbnail(cls, image_id, image_base_path):
         thumbnail_path = cls._get_thumbnail_path(image_id)
         if not os.path.isfile(thumbnail_path):
-            image = ImageDataHandler.get_image(image_id)
+            image = ImageDataHandler.get_image_by_id(image_id)
             cls._create_resized_image(os.path.join(image_base_path, image.file), thumbnail_path,
                                       290)
         return thumbnail_path

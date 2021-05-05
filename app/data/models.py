@@ -47,16 +47,17 @@ class LabelAssignment(Base):
 
     image_id = Column(String, ForeignKey("image.image_id"))
     label_id = Column(String, ForeignKey("label.label_id"))
-    origin = Column(String(256), nullable=False)
+    origin_id = Column(String, ForeignKey("origin.origin_id"))
     creation_time = Column(DateTime, default=func.now())
     confidence = Column(Float)
     bounding_boxes = Column(String)
 
     image = relationship("Image", backref=backref("image"))
     label = relationship("Label", backref=backref("label"))
+    origin = relationship("Origin")
 
     def __repr__(self):
-        return f"Label('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin}', " \
+        return f"Label('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin_id}', " \
                f"'{self.creation_time}', '{self.confidence}', '{self.bounding_boxes}')"
 
     @hybrid_property
@@ -66,3 +67,14 @@ class LabelAssignment(Base):
             return dict(top=top*100, left=left*100, bottom=100-bottom*100, right=100-right*100)
         except ValueError:
             return None
+
+
+class Origin(Base):
+    __tablename__ = "origin"
+    id = Column(Integer, primary_key=True)
+    origin_id = Column(String, nullable=False)
+
+    name = Column(String, nullable=False)
+
+    def __repr__(self):
+        return f"Label('{self.id}', '{self.origin_id}', '{self.name}')"
