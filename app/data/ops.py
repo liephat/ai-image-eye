@@ -157,6 +157,27 @@ class ImageDataHandler:
             return [label.name for label in image.labels]
 
     @classmethod
+    def get_assignments_from_origin(cls, file, origin_name):
+        """
+        Returns a list of label assignments of an image that originate from a defined source.
+        :param origin_name: origin of label assignment
+        :param file: relative path to image file within the image folder
+        """
+        image = cls.get_image(file)
+        origin = cls.get_origin(origin_name)
+
+        if image is None or origin is None:
+            return []
+
+        session = cls._get_main_session()
+        label_assignments = (
+            session.query(LabelAssignment)
+                .filter(LabelAssignment.image == image, LabelAssignment.origin == origin)
+                .all()
+        )
+        return label_assignments
+
+    @classmethod
     def filelist(cls):
         """
         Returns a list of all image files.
