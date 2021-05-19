@@ -22,7 +22,7 @@ class ResNet(Model):
         sorted_ids = np.flip(np.squeeze(np.argsort(result)))
 
         labels = self.labels[sorted_ids[:5]]
-        confidences = raw_result[sorted_ids[:5]]
+        confidences = raw_result[sorted_ids[:5]] / 100
 
         return labels, confidences
 
