@@ -107,7 +107,8 @@ class ImageDataHandler:
         return origin
 
     @classmethod
-    def add_label_assignment(cls, file: str, label_name: str, origin_name: str, confidence=None, bounding_boxes=None):
+    def add_label_assignment(cls, file: str, label_name: str, origin_name: str, confidence=None, bounding_boxes=None,
+                             encoding=None, editable=None):
         """
         Adds a label assignment for an image file to the database.
         :param file: relative path to image file within the image folder
@@ -115,21 +116,23 @@ class ImageDataHandler:
         :param origin_name: origin of label
         :param confidence: confidence that label is true
         :param bounding_boxes: coordinates of bounding box
+        :param editable: specifies whether label should be editable by user or not
+        :param encoding: encoding of detected object
         """
         image = cls.add_image(file)
         label = cls.add_label(label_name)
         origin = cls.add_origin(origin_name)
         session = cls._get_main_session()
-        label_assignment = LabelAssignment(image=image, label=label, origin=origin,
-                                           confidence=confidence, bounding_boxes=bounding_boxes,
-                                           label_assignment_id=create_id())
+        label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
+                                           bounding_boxes=bounding_boxes, encoding=encoding,
+                                           editable=editable, label_assignment_id=create_id())
         session.add(label_assignment)
         session.commit()
 
     @classmethod
     def get_image_by_id(cls, image_id: str):
         return cls._get_main_session().query(Image).filter(Image.image_id == image_id).one_or_none()
-    
+
     @classmethod
     def get_image(cls, file: str):
         return cls._get_main_session().query(Image).filter(Image.file == file).one_or_none()
