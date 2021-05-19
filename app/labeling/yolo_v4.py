@@ -1,14 +1,11 @@
-import colorsys
-import os
-
 import cv2
 import numpy as np
-import random
 
 from scipy import special
 
 from app.labeling.model import Model
 from app.config.parser import ConfigParser
+from app.utils.helper import normalize_coordinates
 
 
 class YoloV4(Model):
@@ -51,7 +48,7 @@ class YoloV4(Model):
         confidences = []
         for _, bbox in enumerate(result):
             coor_orig = np.array(bbox[:4], dtype=np.int32)
-            coor = self._normalize_coordinates(coor_orig, original_image)
+            coor = normalize_coordinates(coor_orig, original_image)
             c1, c2 = (coor[0], coor[1]), (coor[2], coor[3])
 
             labels.append(self.labels[int(bbox[5])])
@@ -86,14 +83,6 @@ class YoloV4(Model):
         bboxes = self._nms(bboxes, 0.213, method='nms')
 
         return bboxes
-
-    def _normalize_coordinates(self, coords, original_image):
-        """ Normalizes coordinate values from pixels to values between 0 and 1
-
-        :param coords: array of coordinates where values are alternating between x and y
-        """
-        original_image_size = list(reversed(original_image.shape[:2]))
-        return [c / original_image_size[i % 2] for i, c in enumerate(coords)]
 
     def _postprocess_bbbox(self, pred_bbox):
         """
