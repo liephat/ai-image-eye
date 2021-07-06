@@ -7,9 +7,6 @@ class LabeledImage extends React.Component {
         this._renderBox = this._renderBox.bind(this);
         this.url = props.url;
         this.labelAssignments = props.labelAssignments;
-        this.state = {
-            highlightedLabelId: null,
-        };
     }
 
     _renderBox(la) {
@@ -20,7 +17,7 @@ class LabeledImage extends React.Component {
                 bottom: la.box.bottom + '%',
                 right: la.box.right + '%',
             };
-            return (<div className='label-box' style={style} key={la.label_assignment_id}>
+            return (<div className='label-box highlight' style={style} key={la.label_assignment_id}>
                 <div className='label-name'>{la.label.name}</div>
             </div>);
         }
@@ -32,12 +29,12 @@ class LabeledImage extends React.Component {
             src={this.url}
             className='thumbnail'
         />);
-        let laId = this.state.highlightedLabelId;
+        let laId = this.props.highlightedLabelAssignmentId;
         let overlay = (<></>);
 
-        if (laId || true) {
+        if (laId) {
             overlay = this.labelAssignments.map((la) => {
-                if (la.label_assignment_id === laId || true) {
+                if (la.label_assignment_id === laId) {
                     return this._renderBox(la);
                 }
                 return null;
