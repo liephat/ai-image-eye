@@ -1,6 +1,6 @@
 import ast
 
-from sqlalchemy import Column, String, ForeignKey, Integer, Float, Boolean, DateTime, func
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, DateTime, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -49,13 +49,8 @@ class LabelAssignment(Base):
     label_id = Column(String, ForeignKey("label.label_id"))
     origin_id = Column(String, ForeignKey("origin.origin_id"))
     creation_time = Column(DateTime, default=func.now())
-    editable = Column(Boolean, default=False)
-    edited = Column(Boolean, default=False)
-
     confidence = Column(Float)
     bounding_boxes = Column(String)
-
-    encoding = Column(String)
 
     image = relationship("Image", backref=backref("image"))
     label = relationship("Label", backref=backref("label"))
