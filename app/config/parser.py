@@ -26,7 +26,8 @@ class ConfigParser:
         return path
 
     def image_formats(self):
-        return self.settings['images']['formats']
+        extensions = self.settings['images']['formats']
+        return {e.upper() for e in extensions}.union({e.lower() for e in extensions})
 
     def image_files(self):
         fp = []
