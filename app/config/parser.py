@@ -55,3 +55,7 @@ class ConfigParser:
 
     def data_file(self):
         return self.settings['data']['file']
+
+    def remove_database(self):
+        if os.path.isfile(self.data_file()):
+            os.remove(self.data_file())

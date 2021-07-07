@@ -115,16 +115,18 @@ class ImageDataHandler:
         :param label_name: label describing the image
         :param origin_name: origin of label
         :param confidence: confidence that label is true
-        :param bounding_boxes: coordinates of bounding box
+        :param bounding_boxes: coordinates of a (single!) bounding box as a dict
+                               with normalized (0..1) corners: {'l': left, 't': top, 'b': bottom, 'r', right}
         :param editable: specifies whether label should be editable by user or not
         :param encoding: encoding of detected object
         """
+        assert bounding_boxes is None or isinstance(bounding_boxes, dict)
         image = cls.add_image(file)
         label = cls.add_label(label_name)
         origin = cls.add_origin(origin_name)
         session = cls._get_main_session()
         label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
-                                           bounding_boxes=bounding_boxes, encoding=encoding,
+                                           bounding_boxes=repr(bounding_boxes), encoding=encoding,
                                            editable=editable, label_assignment_id=create_id())
         session.add(label_assignment)
         session.commit()

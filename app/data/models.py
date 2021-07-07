@@ -54,6 +54,9 @@ class LabelAssignment(Base):
 
     confidence = Column(Float)
     bounding_boxes = Column(String)
+    """ coordinates of a (single!) bounding box. String representation of a dict
+        with normalized (0..1) corners: {'l': left, 't': top, 'b': bottom, 'r', right}
+    """
 
     encoding = Column(String)
 
@@ -62,15 +65,19 @@ class LabelAssignment(Base):
     origin = relationship("Origin")
 
     def __repr__(self):
-        return f"Label('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin_id}', " \
+        return f"LabelAssignment('{self.id}', '{self.image_id}', '{self.label_id}', '{self.origin_id}', " \
                f"'{self.creation_time}', '{self.confidence}', '{self.bounding_boxes}')"
 
     @hybrid_property
     def box(self):
         try:
-            (left, top), (right, bottom) = ast.literal_eval(self.bounding_boxes)
-            return dict(top=top*100, left=left*100, bottom=100-bottom*100, right=100-right*100)
-        except ValueError:
+            bounding_box = ast.literal_eval(self.bounding_boxes)
+            return dict(
+                top=bounding_box['t']*100,
+                left=bounding_box['l']*100,
+                bottom=100-bounding_box['b']*100,
+                right=100-bounding_box['r']*100)
+        except (ValueError, TypeError):
             return None
 
 
