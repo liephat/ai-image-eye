@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 
@@ -11,7 +12,7 @@ from app.data.ops import ImageDataHandler
 from app.labeling.res_net import ResNet
 from app.labeling.yolo_v4 import YoloV4
 from app.config.parser import ConfigParser
-from app.utils.helper import normalize_coordinates
+from app.utils.helper import normalize_coordinates, create_bounding_box
 
 
 def run_classifiers(config: ConfigParser):
@@ -52,8 +53,9 @@ def run_classifiers(config: ConfigParser):
             labels, confidences, bounding_boxes = yolo_v4.classify(np.copy(image))
 
             for (label, confidence, bounding_box) in zip(labels, confidences, bounding_boxes):
+                bounding_box = create_bounding_box(*[c for edge in bounding_box for c in edge])
                 ImageDataHandler.add_label_assignment(rel_path, label_name=label, origin_name=origin,
-                                                      confidence=confidence, bounding_boxes=repr(bounding_box))
+                                                      confidence=confidence, bounding_boxes=bounding_box)
 
         origin = 'dlib_face_rec'
         if not ImageDataHandler.get_assignments_from_origin(rel_path, origin):
@@ -66,20 +68,30 @@ def run_classifiers(config: ConfigParser):
             image_resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
             # classify image with face_recognition
-            bboxes = face_recognition.face_locations(image_resized, model='hog')
+            bboxes = face_recognition.face_locations(image_resized, model='hog')  # order: top, right, bottom, left
             encodings = face_recognition.face_encodings(image_resized)
 
             for (bbox, encoding) in zip(bboxes, encodings):
-                coor_orig = np.array([bbox[0], bbox[3], bbox[2], bbox[1]])  # top, left, bottom, right
+                coor_orig = np.array([bbox[3], bbox[0], bbox[1], bbox[2]])  # left, top, right, bottom
                 coor = normalize_coordinates(coor_orig, image_resized)
-                bounding_box = ((coor[0], coor[1]), (coor[2], coor[3]))
+                bounding_box = create_bounding_box(*coor)
                 ImageDataHandler.add_label_assignment(rel_path, label_name='unknown_face',
-                                                      origin_name=origin, bounding_boxes=repr(bounding_box),
+                                                      origin_name=origin, bounding_boxes=bounding_box,
                                                       encoding=json.dumps(list(encoding)), editable=True)
 
 
 if __name__ == '__main__':
     # Load application configurations
     config = ConfigParser()
+
+    parser = argparse.ArgumentParser(
+        description='Run image classifiers on images as specified in settings.json'
+    )
+    parser.add_argument('--force', default=False, action='store_true',
+                        help='Remove old database before running classifiers')
+    args = parser.parse_args()
+
+    if args.force:
+        config.remove_database()
 
     run_classifiers(config)
