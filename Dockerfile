@@ -7,6 +7,9 @@ LABEL maintainer="The Flask Image Gallery Team"
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6 -y
 
+# Install dependencies for face-recognition
+RUN apt-get install cmake -y
+
 WORKDIR /
 
 # Install Python Environment
