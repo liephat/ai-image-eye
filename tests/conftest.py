@@ -47,7 +47,8 @@ def _fill_test_database():
     handler.add_label_assignment('file1.jpg', 'l_a', 'nnet', .7)
     handler.add_label_assignment('file2.jpg', 'l_a', 'nnet', .3)
     handler.add_label_assignment('file2.jpg', 'l_b', 'nnet', .5)
-    handler.add_label_assignment('file3.jpg', 'l_c', 'dnet', .91, '{"top_left": (3, 4), "bottom_right": (8, 7)}')
+    handler.add_label_assignment('file3.jpg', 'l_c', 'dnet', .91,
+                                 dict(l=0.1, t=0.2, r=0.3, b=0.4))
     handler.add_label_assignment('file4.jpg', 'l_a', 'user')
     handler.add_label_assignment('file4.jpg', 'l_d', 'user')
 
