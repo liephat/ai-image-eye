@@ -19,3 +19,9 @@ class ImagesApi(ApiBase):
             def get(self):
                 all_images = ImageDataHandler.all_images()
                 return all_images
+
+        @ns.route('/image/<string:image_id>')
+        class Image(Resource):
+            @ns.marshal_with(Types.image)
+            def get(self, image_id):
+                return ImageDataHandler.get_image_by_id(image_id)

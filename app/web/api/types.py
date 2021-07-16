@@ -14,6 +14,7 @@ class Types:
         cls.label = api.model('Label', dict(
             label_id=fields.String(readOnly=True),
             name=fields.String(readOnly=True),
+            uri=fields.Url('labels_label'),
         ))
 
         cls.box = api.model('Box', dict(
@@ -26,6 +27,7 @@ class Types:
             box=fields.Nested(cls.box, allow_null=True),
             confidence=fields.Float(),
             origin=fields.String(),
+            uri=fields.Url('labels_assignment'),
         ))
 
         cls.image = api.model('Image', dict(
@@ -34,4 +36,5 @@ class Types:
             label_assignments=fields.List(fields.Nested(cls.label_assignment), readOnly=True),
             url=fields.String(readOnly=True, description='Image file url'),
             thumbnail_url=fields.String(readOnly=True, description='Thumbnail file url'),
+            uri=fields.Url('images_image'),
         ))
