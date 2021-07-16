@@ -144,6 +144,10 @@ class ImageDataHandler:
         return cls._get_main_session().query(Label).filter(Label.name == label_name).one_or_none()
 
     @classmethod
+    def get_label_by_id(cls, label_id: str):
+        return cls._get_main_session().query(Label).filter(Label.label_id == label_id).one_or_none()
+
+    @classmethod
     def get_origin(cls, origin_name: str):
         return cls._get_main_session().query(Origin).filter(Origin.name == origin_name).one_or_none()
 
@@ -201,6 +205,11 @@ class ImageDataHandler:
     @classmethod
     def all_label_assignments(cls) -> List[LabelAssignment]:
         return cls._get_main_session().query(LabelAssignment).all()
+
+    @classmethod
+    def get_label_assignment_by_id(cls, label_assignment_id: str) -> LabelAssignment:
+        return cls._get_main_session().query(LabelAssignment)\
+            .filter(LabelAssignment.label_assignment_id == label_assignment_id).one_or_none()
 
     @classmethod
     def filtered_images(cls, query_string: str) -> List[Image]:
