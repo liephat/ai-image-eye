@@ -89,4 +89,4 @@ class Origin(Base):
     name = Column(String, nullable=False)
 
     def __repr__(self):
-        return f"Label('{self.id}', '{self.origin_id}', '{self.name}')"
+        return f"Origin('{self.id}', '{self.origin_id}', '{self.name}')"
