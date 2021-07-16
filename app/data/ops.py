@@ -44,6 +44,10 @@ class ImageDataHandler:
         return cls._session_class()
 
     @classmethod
+    def _commit_main_session(cls):
+        cls._get_main_session().commit()
+
+    @classmethod
     def reset(cls):
         if cls._main_session:
             cls._main_session.close()
@@ -68,7 +72,7 @@ class ImageDataHandler:
             session.close()
 
     @classmethod
-    def add_image(cls, file: str):
+    def get_or_add_image(cls, file: str):
         # Does image already exist?
         image = cls.get_image(file)
         # Create image if it not exists
@@ -81,7 +85,7 @@ class ImageDataHandler:
         return image
 
     @classmethod
-    def add_label(cls, label_name: str):
+    def get_or_add_label(cls, label_name: str):
         # Does label already exist?
         label = cls.get_label(label_name)
         # Create label if it not exists
@@ -94,7 +98,7 @@ class ImageDataHandler:
         return label
 
     @classmethod
-    def add_origin(cls, origin_name: str):
+    def get_or_add_origin(cls, origin_name: str):
         # Does origin already exist?
         origin = cls.get_origin(origin_name)
         # Create label if it not exists
@@ -121,9 +125,9 @@ class ImageDataHandler:
         :param encoding: encoding of detected object
         """
         assert bounding_boxes is None or isinstance(bounding_boxes, dict)
-        image = cls.add_image(file)
-        label = cls.add_label(label_name)
-        origin = cls.add_origin(origin_name)
+        image = cls.get_or_add_image(file)
+        label = cls.get_or_add_label(label_name)
+        origin = cls.get_or_add_origin(origin_name)
         session = cls._get_main_session()
         label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
                                            bounding_boxes=repr(bounding_boxes), encoding=encoding,
@@ -185,6 +189,17 @@ class ImageDataHandler:
                 .all()
         )
         return label_assignments
+
+    @classmethod
+    def update_label_assignment_label_name(cls, label_assignment_id: str, label_name: str) -> LabelAssignment:
+        # Update the label
+        assignment = cls.get_label_assignment_by_id(label_assignment_id)
+        if assignment is None:
+            return None
+        label = cls.get_or_add_label(label_name)
+        assignment.label = label
+        cls._commit_main_session()
+        return assignment
 
     @classmethod
     def filelist(cls) -> List[str]:
