@@ -1,146 +1,22 @@
 import logging
-import os
-import threading
-import time
-from contextlib import contextmanager
-from typing import Optional, ContextManager, List, Dict, Tuple
+from typing import List
 
-from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker, Session
-
-from app.config.parser import ConfigParser
 from app.data.ids import create_id
-from app.data.models import Image, Label, Base, LabelAssignment, Origin
+from app.data.models import Image, Label, LabelAssignment, Origin
+from app.data.session import SessionWrapper
 
 logger = logging.getLogger(__name__)
 
 
-class SessionWrapper:
-    """ Helper class that manages the life-cycle of an SQLAlchemy session """
-
-    MAX_AGE = 60  # maximum session age in seconds
-
-    def __init__(self, session):
-        self._session: Session = session
-        self._in_use = False
-        self._access_time = time.time()
-
-    def _get_session(self):
-        assert self._session is not None
-        self._access_time = time.time()
-        self._in_use = True
-        return self._session
-
-    def done(self):
-        self._in_use = False
-
-    def close_if_old(self):
-        """ Close long running, unused session """
-        if self._in_use or time.time() - self._access_time < self.MAX_AGE:
-            return False
-        self.close()
-        return True
-
-    def is_valid(self):
-        return self._session is not None
-
-    def commit(self):
-        self.done()
-        self._session.commit()
-
-    def add(self, element):
-        self._get_session().add(element)
-
-    def query(self, *entities, **kwargs):
-        return self._get_session().query(*entities, **kwargs)
-
-    def close(self):
-        if self._session is None:
-            return
-        self.done()
-        self._get_session().close()
-        self._session = None
-
-
 class ImageDataHandler:
-    _sessions: Dict[Tuple[str, int, int], SessionWrapper] = {}
-    _sessions_lock = threading.RLock()
-    _engine: Optional[Engine] = None
-    _session_class = None
 
     @classmethod
-    def _get_session(cls) -> SessionWrapper:
-        """ Create a session that is unique to the current thread. """
-
-        # Try to be as unique as possible, as thread ids (Thread.get_ident()) may be recycled.
-        thread_id = (threading.current_thread().getName(),
-                     id(threading.current_thread()),
-                     threading.get_ident())
-
-        with cls._sessions_lock:
-            session_wrapper = cls._sessions.get(thread_id)
-            if session_wrapper is None or not session_wrapper.is_valid():
-                logger.info(f'Creating database session for {thread_id}')
-                session_wrapper = SessionWrapper(cls._create_session())
-                cls._sessions[thread_id] = session_wrapper
-            cls._close_old_sessions()
-            return session_wrapper
-
-    @classmethod
-    def _close_old_sessions(cls):
-        """ Auto-close all sessions that are old """
-        with cls._sessions_lock:
-            for key, session_wrapper in cls._sessions.copy().items():
-                if session_wrapper.close_if_old():
-                    logger.info(f'Removing old session for {key}')
-                    del cls._sessions[key]
-
-    @classmethod
-    def _init_engine(cls):
-        """ On first access, the database engine and session class is initialized """
-        if cls._engine is None:
-            config = ConfigParser()
-            filepath = os.path.join(os.getcwd(), config.data_file())
-            cls._engine = create_engine(f"sqlite:////{filepath}")
-            Base.metadata.create_all(bind=cls._engine)
-
-            cls._session_class = sessionmaker()
-            cls._session_class.configure(bind=cls._engine)
-
-    @classmethod
-    def _create_session(cls):
-        cls._init_engine()
-        return cls._session_class()
+    def _get_session(cls):
+        return SessionWrapper.get_session()
 
     @classmethod
     def _commit_session(cls):
-        cls._get_session().commit()
-
-    @classmethod
-    def reset(cls):
-        with cls._sessions_lock:
-            for session in cls._sessions.values():
-                session.close()
-            cls._sessions = {}
-        if cls._engine:
-            cls._engine.dispose()
-            cls._engine = None
-        cls._session_class = None
-
-    @classmethod
-    @contextmanager
-    def auto_session(cls) -> ContextManager[Session]:
-        """ Yields a new session and commits and closes it afterwards """
-        session = cls._create_session()
-        try:
-            yield session
-            session.commit()
-        except Exception:  # pylint: disable=broad-except
-            logger.exception('Session will be rolled back')
-            session.rollback()
-        finally:
-            session.close()
+        return cls._get_session().commit()
 
     @classmethod
     def get_or_add_image(cls, file: str):
@@ -232,13 +108,8 @@ class ImageDataHandler:
         Returns list of labels for one image.
         :param file: relative path to image file within the image folder
         """
-        with cls.auto_session() as session:
-            image = (
-                session.query(Image)
-                    .filter(Image.file == file)
-                    .one_or_none()
-            )
-            return [label.name for label in image.labels]
+        image = cls._get_session().query(Image).filter(Image.file == file).one_or_none()
+        return [label.name for label in image.labels]
 
     @classmethod
     def get_assignments_from_origin(cls, file: str, origin_name: str) -> List[LabelAssignment]:
@@ -254,11 +125,10 @@ class ImageDataHandler:
             return []
 
         session = cls._get_session()
-        label_assignments = (
-            session.query(LabelAssignment)
-                .filter(LabelAssignment.image == image, LabelAssignment.origin == origin)
-                .all()
-        )
+        label_assignments = session\
+            .query(LabelAssignment)\
+            .filter(LabelAssignment.image == image, LabelAssignment.origin == origin)\
+            .all()
         return label_assignments
 
     @classmethod
@@ -277,8 +147,7 @@ class ImageDataHandler:
         """
         Returns a list of all image files.
         """
-        with cls.auto_session() as session:
-            return [file for (file,) in session.query(Image.file).all()]
+        return [file for (file,) in cls._get_session().query(Image.file).all()]
 
     @classmethod
     def all_images(cls) -> List[Image]:

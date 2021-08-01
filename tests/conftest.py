@@ -5,6 +5,7 @@ import pytest
 
 from app.config import parser
 from app.data.ops import ImageDataHandler
+from app.data.session import SessionWrapper
 from app.web.app import AppWrapper
 
 app = AppWrapper().init_flask_app()
@@ -35,8 +36,8 @@ def _setup_test_settings():
 
 
 def _fill_test_database():
+    SessionWrapper.reset()
     handler = ImageDataHandler
-    handler.reset()
 
     if os.path.isfile(TEST_DATABASE):
         os.unlink(TEST_DATABASE)
