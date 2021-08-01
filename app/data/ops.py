@@ -1,7 +1,9 @@
 import logging
 import os
+import threading
+import time
 from contextlib import contextmanager
-from typing import Optional, ContextManager, List
+from typing import Optional, ContextManager, List, Dict, Tuple
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
@@ -14,17 +16,85 @@ from app.data.models import Image, Label, Base, LabelAssignment, Origin
 logger = logging.getLogger(__name__)
 
 
+class SessionWrapper:
+    """ Helper class that manages the life-cycle of an SQLAlchemy session """
+
+    MAX_AGE = 60  # maximum session age in seconds
+
+    def __init__(self, session):
+        self._session: Session = session
+        self._in_use = False
+        self._access_time = time.time()
+
+    def _get_session(self):
+        assert self._session is not None
+        self._access_time = time.time()
+        self._in_use = True
+        return self._session
+
+    def done(self):
+        self._in_use = False
+
+    def close_if_old(self):
+        """ Close long running, unused session """
+        if self._in_use or time.time() - self._access_time < self.MAX_AGE:
+            return False
+        self.close()
+        return True
+
+    def is_valid(self):
+        return self._session is not None
+
+    def commit(self):
+        self.done()
+        self._session.commit()
+
+    def add(self, element):
+        self._get_session().add(element)
+
+    def query(self, *entities, **kwargs):
+        return self._get_session().query(*entities, **kwargs)
+
+    def close(self):
+        if self._session is None:
+            return
+        self.done()
+        self._get_session().close()
+        self._session = None
+
+
 class ImageDataHandler:
-    _main_session: Optional[Session] = None
+    _sessions: Dict[Tuple[str, int, int], SessionWrapper] = {}
+    _sessions_lock = threading.RLock()
     _engine: Optional[Engine] = None
     _session_class = None
 
     @classmethod
-    def _get_main_session(cls) -> Session:
-        """ The main session should be used for all database reading """
-        if cls._main_session is None:
-            cls._main_session = cls._create_session()
-        return cls._main_session
+    def _get_session(cls) -> SessionWrapper:
+        """ Create a session that is unique to the current thread. """
+
+        # Try to be as unique as possible, as thread ids (Thread.get_ident()) may be recycled.
+        thread_id = (threading.current_thread().getName(),
+                     id(threading.current_thread()),
+                     threading.get_ident())
+
+        with cls._sessions_lock:
+            session_wrapper = cls._sessions.get(thread_id)
+            if session_wrapper is None or not session_wrapper.is_valid():
+                logger.info(f'Creating database session for {thread_id}')
+                session_wrapper = SessionWrapper(cls._create_session())
+                cls._sessions[thread_id] = session_wrapper
+            cls._close_old_sessions()
+            return session_wrapper
+
+    @classmethod
+    def _close_old_sessions(cls):
+        """ Auto-close all sessions that are old """
+        with cls._sessions_lock:
+            for key, session_wrapper in cls._sessions.copy().items():
+                if session_wrapper.close_if_old():
+                    logger.info(f'Removing old session for {key}')
+                    del cls._sessions[key]
 
     @classmethod
     def _init_engine(cls):
@@ -44,14 +114,15 @@ class ImageDataHandler:
         return cls._session_class()
 
     @classmethod
-    def _commit_main_session(cls):
-        cls._get_main_session().commit()
+    def _commit_session(cls):
+        cls._get_session().commit()
 
     @classmethod
     def reset(cls):
-        if cls._main_session:
-            cls._main_session.close()
-            cls._main_session = None
+        with cls._sessions_lock:
+            for session in cls._sessions.values():
+                session.close()
+            cls._sessions = {}
         if cls._engine:
             cls._engine.dispose()
             cls._engine = None
@@ -77,7 +148,7 @@ class ImageDataHandler:
         image = cls.get_image(file)
         # Create image if it not exists
         if image is None:
-            session = cls._get_main_session()
+            session = cls._get_session()
             image = Image(image_id=create_id(), file=file)
             session.add(image)
             session.commit()
@@ -90,7 +161,7 @@ class ImageDataHandler:
         label = cls.get_label(label_name)
         # Create label if it not exists
         if label is None:
-            session = cls._get_main_session()
+            session = cls._get_session()
             label = Label(label_id=create_id(), name=label_name)
             session.add(label)
             session.commit()
@@ -103,7 +174,7 @@ class ImageDataHandler:
         origin = cls.get_origin(origin_name)
         # Create label if it not exists
         if origin is None:
-            session = cls._get_main_session()
+            session = cls._get_session()
             origin = Origin(origin_id=create_id(), name=origin_name)
             session.add(origin)
             session.commit()
@@ -128,7 +199,7 @@ class ImageDataHandler:
         image = cls.get_or_add_image(file)
         label = cls.get_or_add_label(label_name)
         origin = cls.get_or_add_origin(origin_name)
-        session = cls._get_main_session()
+        session = cls._get_session()
         label_assignment = LabelAssignment(image=image, label=label, origin=origin, confidence=confidence,
                                            bounding_boxes=repr(bounding_boxes), encoding=encoding,
                                            editable=editable, label_assignment_id=create_id())
@@ -137,23 +208,23 @@ class ImageDataHandler:
 
     @classmethod
     def get_image_by_id(cls, image_id: str):
-        return cls._get_main_session().query(Image).filter(Image.image_id == image_id).one_or_none()
+        return cls._get_session().query(Image).filter(Image.image_id == image_id).one_or_none()
 
     @classmethod
     def get_image(cls, file: str):
-        return cls._get_main_session().query(Image).filter(Image.file == file).one_or_none()
+        return cls._get_session().query(Image).filter(Image.file == file).one_or_none()
 
     @classmethod
     def get_label(cls, label_name: str):
-        return cls._get_main_session().query(Label).filter(Label.name == label_name).one_or_none()
+        return cls._get_session().query(Label).filter(Label.name == label_name).one_or_none()
 
     @classmethod
     def get_label_by_id(cls, label_id: str):
-        return cls._get_main_session().query(Label).filter(Label.label_id == label_id).one_or_none()
+        return cls._get_session().query(Label).filter(Label.label_id == label_id).one_or_none()
 
     @classmethod
     def get_origin(cls, origin_name: str):
-        return cls._get_main_session().query(Origin).filter(Origin.name == origin_name).one_or_none()
+        return cls._get_session().query(Origin).filter(Origin.name == origin_name).one_or_none()
 
     @classmethod
     def get_labels_of_image(cls, file) -> List[str]:
@@ -182,7 +253,7 @@ class ImageDataHandler:
         if image is None or origin is None:
             return []
 
-        session = cls._get_main_session()
+        session = cls._get_session()
         label_assignments = (
             session.query(LabelAssignment)
                 .filter(LabelAssignment.image == image, LabelAssignment.origin == origin)
@@ -198,7 +269,7 @@ class ImageDataHandler:
             return None
         label = cls.get_or_add_label(label_name)
         assignment.label = label
-        cls._commit_main_session()
+        cls._commit_session()
         return assignment
 
     @classmethod
@@ -211,28 +282,28 @@ class ImageDataHandler:
 
     @classmethod
     def all_images(cls) -> List[Image]:
-        return cls._get_main_session().query(Image).all()
+        return cls._get_session().query(Image).all()
 
     @classmethod
     def all_labels(cls) -> List[Label]:
-        return cls._get_main_session().query(Label).all()
+        return cls._get_session().query(Label).all()
 
     @classmethod
     def all_label_assignments(cls) -> List[LabelAssignment]:
-        return cls._get_main_session().query(LabelAssignment).all()
+        return cls._get_session().query(LabelAssignment).all()
 
     @classmethod
     def get_label_assignment_by_id(cls, label_assignment_id: str) -> LabelAssignment:
-        return cls._get_main_session().query(LabelAssignment)\
+        return cls._get_session().query(LabelAssignment)\
             .filter(LabelAssignment.label_assignment_id == label_assignment_id).one_or_none()
 
     @classmethod
     def filtered_images(cls, query_string: str) -> List[Image]:
         if '*' in query_string:
             like_string = query_string.replace('*', '%')
-            labels = cls._get_main_session().query(Label).filter(Label.name.like(like_string)).all()
+            labels = cls._get_session().query(Label).filter(Label.name.like(like_string)).all()
         else:
-            labels = cls._get_main_session().query(Label).filter(Label.name == query_string).all()
+            labels = cls._get_session().query(Label).filter(Label.name == query_string).all()
 
         return list(set(image for label in labels for image in label.images))
 
