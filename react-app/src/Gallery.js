@@ -6,6 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { flaskUrl } from './constants';
 
+require('fslightbox');
+
 class Gallery extends React.Component {
 
     constructor(props) {
@@ -35,6 +37,7 @@ class Gallery extends React.Component {
                 numLoaded: 6,
             });
         });
+        global.refreshFsLightbox();
     }
 
     _installScrollObserver() {
@@ -56,6 +59,7 @@ class Gallery extends React.Component {
         this.setState({
             numLoaded: numLoadMore,
         })
+        global.refreshFsLightbox();
     }
 
     _renderThumbnail(image) {
@@ -63,6 +67,7 @@ class Gallery extends React.Component {
             path={image.path}
             thumbnail_url={image.thumbnail_url}
             name={image.file}
+            url={image.url}
             label_assignments={image.label_assignments} />)
     }
 

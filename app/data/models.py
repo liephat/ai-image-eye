@@ -5,6 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
+from app.web.util.filters import escape_url
+
 Base = declarative_base()
 
 
@@ -21,7 +23,7 @@ class Image(Base):
 
     @hybrid_property
     def url(self):
-        return f'/images/{self.file}'
+        return f'/images/?name={escape_url(self.file)}'
 
     @hybrid_property
     def thumbnail_url(self):

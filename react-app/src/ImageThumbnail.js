@@ -46,6 +46,7 @@ class ImageThumbnail extends React.Component {
 
         let labeled_image = (<LabeledImage
             url={flaskUrl(this.props.thumbnail_url)} labelAssignments={this.props.label_assignments}
+            full_image_url={flaskUrl(this.props.url)}
             highlightedLabelAssignmentId={this.state.highlightedLabelAssignmentId} />
         );
         return (

@@ -25,10 +25,14 @@ class LabeledImage extends React.Component {
     }
 
     render() {
-        let image = (<Figure.Image
-            src={this.url}
-            className='thumbnail'
-        />);
+        let full_image_url = this.props.full_image_url;
+        let image = (
+            <a data-fslightbox="gallery" href={full_image_url}>
+                <Figure.Image
+                    src={this.url}
+                    className='thumbnail'
+                />
+            </a>);
         let laId = this.props.highlightedLabelAssignmentId;
         let overlay = (<></>);
 
