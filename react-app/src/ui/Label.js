@@ -12,7 +12,7 @@ class Label extends React.Component {
     calculateStyle() {
         // TODO: calculate color unique to this label
         let color = 'antiquewhite';
-        if (this.label_assignment.label.name === 'person') {
+        if (this.label_assignment.label.name === 'unknown_face') {
             color = 'burlywood';
         }
         return {
