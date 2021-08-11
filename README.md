@@ -1,19 +1,18 @@
-# flask-image-database
+# ai-image-eye
+![Demo](media/demo.gif)
 
-A responsive image gallery based on python flask. The aim of this application is to provide an automatic labeling of objects
-and scenes in images and present them in a gallery that can be accessed by any web browser. It should additionally be possible
-to filter the image collection according to labels that were automatically determined by running pretrained classification models on the
-whole dataset.
+A responsive image gallery with an AI powered backend labeling the content. 
 
-Work is currently in progress.
+The server application crawls through a user-defined folder searching for images. The images are then scanned by a 
+set of deep learning models providing labels describing the images. The labels are finally stored in a SQL database.
 
-There are some features yet to be developed:
-- Running application in a customized docker container
-- Dynamic loading of images
-- Rest API communication between backend and frontend
-- Frontend filter functionality
-- Automatic job that runs periodically to classify images
-- Appropriate form of persisting detected labels
+AI labeling features:
+- Image classification 
+- Object detection
+- Face recognition
+
+The image gallery can be accessed via browser. The images are provided by a react-app communicating through a 
+REST API with a backend based on python flask.
 
 ## Requirements
 
@@ -23,15 +22,16 @@ Run ```pip install -r requirements.txt``` in project directory.
 
 ResNet source: https://github.com/onnx/models/blob/master/vision/classification/resnet/model/resnet50-v2-7.onnx
 
+YoloV4 source: https://github.com/onnx/models/blob/master/vision/object_detection_segmentation/yolov4/model/yolov4.onnx
 
 ## Run instructions (Backend: flask-app)
-Make sure you have saved the ResNet model and its label dictionary to a directory, e.g. ```/config/models/resnet```. 
-The paths to these files and the path to the directory of your images must be defined in ```/config/settings.json```.
+Make sure you are using git-lfs to pull the large deep learning model files. The path to the directory of your images 
+must be defined in ```config/settings.json```.
 
-Run ```python classify_images.py```. The script creates a file ```data.csv``` containing the Top-5 labels for each image
-in your image directory.
+Run ```python classify_images.py```. The script scans for images and writes their labels to a SQL database saved in 
+```config/image_label.db```.
 
-Run ```python -m app``` to start the application.
+Run ```python -m app``` to start the image server.
 
 
 ## Run instructions (Frontend: react-app)
